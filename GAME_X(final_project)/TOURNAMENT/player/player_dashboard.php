@@ -10,67 +10,44 @@ checkAuth('player');
 // Get player info from session
 $username = $_SESSION['username'] ?? 'Player';
 
-// ==============================
-// Fetch the player’s tournaments
-// ==============================
 $tournaments = [];
 $selectedTournament = $_GET['tournament_id'] ?? null;
 $matches = [];
 
 try {
-    // Example query — adjust table names based on your schema
-    $stmt = $conn->prepare("SELECT tournament_id, title, status, start_date 
+  // Example query — adjust table names based on your schema
+  $stmt = $conn->prepare("SELECT tournament_id, title, status, start_date 
                         FROM tournaments 
                         WHERE organizer_id = ?");
-    $stmt->execute([$_SESSION['account_id']]);
-    $tournaments = $stmt->fetchAll();
+  $stmt->execute([$_SESSION['account_id']]);
+  $tournaments = $stmt->fetchAll();
 
-    // If a tournament is selected, fetch matches
-    if ($selectedTournament) {
-        $stmt2 = $conn->prepare("SELECT * FROM matches WHERE tournament_id = ?");
-        $stmt2->execute([$selectedTournament]);
-        $matches = $stmt2->fetchAll();
-    }
+  // If a tournament is selected, fetch matches
+  if ($selectedTournament) {
+    $stmt2 = $conn->prepare("SELECT * FROM matches WHERE tournament_id = ?");
+    $stmt2->execute([$selectedTournament]);
+    $matches = $stmt2->fetchAll();
+  }
 } catch (PDOException $e) {
-    die("Error fetching tournaments: " . $e->getMessage());
+  die("Error fetching tournaments: " . $e->getMessage());
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Player Dashboard | GameX</title>
   <link rel="stylesheet" href="../assets/css/common.css" />
   <link rel="stylesheet" href="../assets/css/player_dashboard.css" />
+  <link rel="stylesheet" href="../assets/css/sweetalert2.min.css">
 </head>
+
 <body>
   <!-- ========== NAVBAR ========== -->
-<header class="navbar">
-  <div class="logo">
-    <a href="../index.php" class="logo-link">
-      <img src="../assets/images/game_x_logo.png" alt="Game X Community" class="logo-img" />
-      <h1><span class="highlight-orange">GAME</span><span class="highlight-red"> X</span></h1>
-    </a>
-  </div>
-
-    <nav>
-      <a href="player_dashboard.php">Dashboard</a>
-      <a href="register_tournament.php">Register Tournament</a>
-      <a href="create_team.php">Create Team</a>
-      <a href="invite_player.php">Invite Player</a>
-      <a href="invitations.php">Invitations</a>
-      <a href="respond_invite.php">Respond to Invitations</a>
-      <a href="my_registrations.php">My Tournaments</a>
-      <a href="player_contact.php">Support</a>
-    </nav>
-
-    <div class="nav-actions">
-      <button id="darkModeToggle" class="darkmode-btn">Dark Mode</button>
-      <a href="../auth/logout.php" class="btn">Logout</a>
-    </div>
-  </header>
+  <?php require_once "../includes/player/player_navbar.php"; ?>
 
   <!-- === MAIN CONTENT === -->
   <main class="dashboard-container">
@@ -93,8 +70,8 @@ try {
             <li>
               <a href="?tournament_id=<?= (int)$t['id'] ?>" <?= ($t['id'] == $selectedTournament) ? 'class="selected"' : '' ?>>
                 <?= htmlspecialchars($t['name']) ?>
-              </a> 
-              - <small>Status: <span class="status"><?= htmlspecialchars($t['status']) ?></span></small>, 
+              </a>
+              - <small>Status: <span class="status"><?= htmlspecialchars($t['status']) ?></span></small>,
               <small>Starts: <?= htmlspecialchars($t['start_date']) ?></small>
             </li>
           <?php endforeach; ?>
@@ -109,7 +86,7 @@ try {
       <h2> Tournament Brackets</h2>
       <?php if ($selectedTournament): ?>
         <div class="bracket-block">
-          <h3>Bracket for 
+          <h3>Bracket for
             <?= htmlspecialchars(
               array_column(
                 array_filter($tournaments, fn($t) => $t['id'] == $selectedTournament),
@@ -139,8 +116,30 @@ try {
   <footer class="footer">
     <p>© 2025 GameX Tournament Platform. All rights reserved.</p>
   </footer>
-
-  <script src="../assets/js/darkmode_toggle.js"></script>
-  <script src="../assets/js/index.js"></script>
 </body>
+<!-- SweetAlert2 JS -->
+<script src="../assets/js/sweetalert2.all.min.js"></script>
+<script>
+  <?php if (isset($_SESSION['login_success']) && $_SESSION['login_success']): ?>
+    Swal.fire({
+      icon: 'success',
+      title: 'Welcome Back! 🎮',
+      html: '<p style="font-size: 1.1rem; margin-top: 10px;">Hello <strong><?= htmlspecialchars($username) ?></strong>! Ready to dominate the arena?</p>',
+      timer: 3000,
+      timerProgressBar: true,
+      showConfirmButton: false,
+      background: '#1a1a1a',
+      color: '#fff',
+      iconColor: '#ff6600',
+      customClass: {
+        popup: 'swal-dark-theme'
+      }
+    });
+    <?php unset($_SESSION['login_success']); ?>
+  <?php endif; ?>
+</script>
+
+<script src="../assets/js/darkmode_toggle.js"></script>
+<script src="../assets/js/index.js"></script>
+
 </html>

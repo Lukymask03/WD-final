@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 31, 2025 at 02:10 AM
+-- Generation Time: Oct 31, 2025 at 10:25 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -32,10 +32,11 @@ CREATE TABLE `accounts` (
   `username` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `role` enum('organizer','player') NOT NULL,
+  `role` enum('organizer','player') DEFAULT NULL,
   `fullname` varchar(100) DEFAULT NULL,
   `team` varchar(100) DEFAULT NULL,
   `age` int(11) DEFAULT NULL,
+  `is_admin` tinyint(1) NOT NULL DEFAULT 0,
   `account_status` enum('active','suspended','pending') DEFAULT 'active',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -44,9 +45,36 @@ CREATE TABLE `accounts` (
 -- Dumping data for table `accounts`
 --
 
-INSERT INTO `accounts` (`account_id`, `username`, `email`, `password`, `role`, `fullname`, `team`, `age`, `account_status`, `created_at`) VALUES
-(2, 'PLAYER1', 'player_1@gmail.com', '$2y$10$1pkPU0xom1dzO.Xqhb9JmOJg7yBZdstZqDNRrmZjT5HZaRFtAYFem', 'player', 'Juan Dela Cruz', NULL, 18, 'active', '2025-10-18 16:10:54'),
-(3, 'Staff_1', 'staff1@gmail.com', '$2y$10$xkUAwar4GZsGtOzNKvJ4BOoVC/th8QxW1vZeG6smfOxNi3BifsFkC', 'organizer', '', NULL, 0, 'active', '2025-10-24 14:32:24');
+INSERT INTO `accounts` (`account_id`, `username`, `email`, `password`, `role`, `fullname`, `team`, `age`, `is_admin`, `account_status`, `created_at`) VALUES
+(2, 'PLAYER1', 'player_1@gmail.com', '$2y$10$1pkPU0xom1dzO.Xqhb9JmOJg7yBZdstZqDNRrmZjT5HZaRFtAYFem', 'player', 'Juan Dela Cruz', NULL, 18, 0, 'active', '2025-10-18 16:10:54'),
+(3, 'Staff_1', 'staff1@gmail.com', '$2y$10$xkUAwar4GZsGtOzNKvJ4BOoVC/th8QxW1vZeG6smfOxNi3BifsFkC', 'organizer', '', NULL, 0, 0, 'active', '2025-10-24 14:32:24'),
+(6, 'admin', 'admin@gamex.com', '$2y$10$qG915KrvV/OMBllGHuMexegLbztwarbu0tF8sbARvoSHxQDejI/Fq', '', NULL, NULL, NULL, 1, 'active', '2025-10-31 05:17:40'),
+(7, 'ajmayran', 'aj@gmail.com', '$2y$10$/PjND3f2Pd.POi4uhjCrceuHtAUXtol4MiCCIBAaRqjREstaiZhXW', 'player', 'AJ', NULL, 21, 0, 'active', '2025-10-31 05:52:50');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `games`
+--
+
+CREATE TABLE `games` (
+  `game_id` int(11) NOT NULL,
+  `game_name` varchar(100) NOT NULL,
+  `game_icon` varchar(255) DEFAULT NULL,
+  `game_image` varchar(255) DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `games`
+--
+
+INSERT INTO `games` (`game_id`, `game_name`, `game_icon`, `game_image`, `is_active`) VALUES
+(1, 'Dota 2', 'fas fa-gamepad', 'assets/images/games/game_69044d6c785c5.png', 1),
+(2, 'Valorant', 'fas fa-gamepad', 'assets/images/games/game_69044d7f01c4d.png', 1),
+(3, 'Mobile Legend', 'fas fa-gamepad', 'assets/images/games/game_69044d8ec05d2.png', 1),
+(4, 'League Of Legends', 'fas fa-gamepad', 'assets/images/games/game_69044da08384c.jpg', 1),
+(5, 'Call Of Duty Mobile', 'fas fa-gamepad', 'assets/images/games/game_69044dad95758.png', 1);
 
 -- --------------------------------------------------------
 
@@ -101,9 +129,19 @@ CREATE TABLE `teams` (
   `team_id` int(11) NOT NULL,
   `team_name` varchar(255) NOT NULL,
   `game_name` varchar(100) NOT NULL,
+  `introduction` text DEFAULT NULL,
+  `team_logo` varchar(255) DEFAULT NULL,
+  `max_members` int(11) NOT NULL DEFAULT 5,
   `created_by` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `teams`
+--
+
+INSERT INTO `teams` (`team_id`, `team_name`, `game_name`, `introduction`, `team_logo`, `max_members`, `created_by`, `created_at`) VALUES
+(1, 'CCS', 'Valorant', 'CCS qpals', 'assets/images/teams/team_6904621a35fd2.png', 5, 7, '2025-10-31 07:15:38');
 
 -- --------------------------------------------------------
 
@@ -129,8 +167,16 @@ CREATE TABLE `team_invitations` (
 CREATE TABLE `team_members` (
   `team_id` int(11) NOT NULL,
   `account_id` int(11) NOT NULL,
+  `role` enum('leader','member','','') NOT NULL DEFAULT 'member',
   `joined_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `team_members`
+--
+
+INSERT INTO `team_members` (`team_id`, `account_id`, `role`, `joined_at`) VALUES
+(1, 7, 'leader', '2025-10-31 07:15:38');
 
 -- --------------------------------------------------------
 
@@ -161,6 +207,13 @@ ALTER TABLE `accounts`
   ADD PRIMARY KEY (`account_id`),
   ADD UNIQUE KEY `username` (`username`),
   ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indexes for table `games`
+--
+ALTER TABLE `games`
+  ADD PRIMARY KEY (`game_id`),
+  ADD UNIQUE KEY `game_name` (`game_name`);
 
 --
 -- Indexes for table `organizer_profiles`
@@ -223,7 +276,13 @@ ALTER TABLE `tournaments`
 -- AUTO_INCREMENT for table `accounts`
 --
 ALTER TABLE `accounts`
-  MODIFY `account_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `account_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `games`
+--
+ALTER TABLE `games`
+  MODIFY `game_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `organizer_profiles`
@@ -247,7 +306,7 @@ ALTER TABLE `registrations`
 -- AUTO_INCREMENT for table `teams`
 --
 ALTER TABLE `teams`
-  MODIFY `team_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `team_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `team_invitations`

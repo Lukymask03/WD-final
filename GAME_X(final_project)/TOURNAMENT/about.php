@@ -84,7 +84,7 @@ include 'backend/db.php';
                 <div class="team-card">
                     <div class="team-card-inner">
                         <div class="team-image">
-                            <img src="assets/images/default.png" alt="Founder">
+                            <img src="assets/images/ramses/ramses1.jpg" alt="Founder">
                             <div class="team-overlay">
                                 <div class="team-social">
                                     <a href="#" class="team-social-link"><i class="fab fa-linkedin"></i></a>
@@ -108,7 +108,7 @@ include 'backend/db.php';
                 <div class="team-card">
                     <div class="team-card-inner">
                         <div class="team-image">
-                            <img src="assets/images/default.png" alt="UI Designer">
+                            <img src="assets/images/ramses/ramses2.jpg" alt="UI Designer">
                             <div class="team-overlay">
                                 <div class="team-social">
                                     <a href="#" class="team-social-link"><i class="fab fa-linkedin"></i></a>
@@ -132,7 +132,7 @@ include 'backend/db.php';
                 <div class="team-card">
                     <div class="team-card-inner">
                         <div class="team-image">
-                            <img src="assets/images/default.png" alt="Community Manager">
+                            <img src="assets/images/ramses/ramses3.jpg" alt="Community Manager">
                             <div class="team-overlay">
                                 <div class="team-social">
                                     <a href="#" class="team-social-link"><i class="fab fa-linkedin"></i></a>
