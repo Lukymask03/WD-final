@@ -1,0 +1,184 @@
+/* === ABOUT PAGE STYLES === */
+.about-section {
+  padding: 80px 20px;
+  text-align: center;
+  background: var(--bg-main);
+  color: var(--text-main);
+  transition: background 0.3s, color 0.3s;
+}
+
+.about-section h1 {
+  font-size: 2.8rem;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.about-section p {
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.8;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+}
+
+/* === ABOUT CARDS === */
+.about-cards {
+  margin-top: 50px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}
+
+.about-card {
+  background: var(--bg-card);
+  color: var(--text-main);
+  padding: 30px;
+  border-radius: 15px;
+  width: 300px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255,102,0,0.1);
+}
+
+.about-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 0 15px var(--accent-cyan), 0 0 30px var(--accent-magenta);
+}
+
+.about-card h3 {
+  color: var(--accent);
+  margin-bottom: 12px;
+  font-size: 1.3rem;
+}
+
+.about-card p {
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* === DARK MODE === */
+body.dark-mode .about-section {
+  background: #0E0E0E;
+  color: #f5f5f5;
+}
+
+body.dark-mode .about-card {
+  background: #1A1A1A;
+  color: #F5F5F5;
+  border: 1px solid #333;
+  box-shadow: 0 0 20px rgba(0,255,255,0.05);
+}
+
+body.dark-mode .about-card h3 {
+  color: #FFB347;
+}
+/* === TEAM SECTION (LANDSCAPE + COLOR-ENHANCED) === */
+.team-section {
+  padding: 100px 8%;
+  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-main) 100%);
+  text-align: center;
+  color: var(--text-main);
+  transition: background-color 0.4s, color 0.4s;
+  border-top: 2px solid var(--border);
+  border-bottom: 2px solid var(--border);
+}
+
+.team-section h2 {
+  font-size: 2.6rem;
+  color: var(--accent);
+  margin-bottom: 60px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+}
+
+.team-section h2::after {
+  content: "";
+  display: block;
+  width: 100px;
+  height: 3px;
+  background: var(--accent);
+  margin: 12px auto 0;
+  border-radius: 5px;
+}
+
+/* Team card container - aligned landscape */
+.team-container {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-top: 40px;
+}
+
+/* Each team card */
+.team-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  width: 320px;
+  padding: 30px 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+}
+
+.team-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 0 25px rgba(255, 94, 0, 0.4);
+}
+
+/* Profile images */
+.team-card img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--accent);
+  margin-bottom: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.team-card img:hover {
+  transform: scale(1.07);
+  box-shadow: 0 0 15px rgba(255, 94, 0, 0.6);
+}
+
+/* Text styling */
+.team-card h3 {
+  font-size: 1.3rem;
+  color: var(--accent);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.team-card p {
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* === DARK MODE TEAM === */
+body.dark-mode .team-section {
+  background: linear-gradient(180deg, #0D0D0D 0%, #1A1A1A 100%);
+}
+
+body.dark-mode .team-card {
+  background: #141414;
+  border-color: #333;
+  box-shadow: 0 0 20px rgba(255, 94, 0, 0.1);
+}
+
+body.dark-mode .team-card:hover {
+  box-shadow: 0 0 25px rgba(255, 94, 0, 0.35);
+}
+
+body.dark-mode .team-card h3 {
+  color: var(--accent);
+}
+
+body.dark-mode .team-card p {
+  color: #CCC;
+}

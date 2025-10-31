@@ -1,0 +1,281 @@
+/* ==============================
+    TOURNAMENT PAGE STYLES
+   ============================== */
+
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ==============================
+    HERO SECTION
+   ============================== */
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 80px 5%;
+  background: linear-gradient(to right, #1a1a1a, #222);
+  color: #fff;
+  gap: 40px;
+}
+
+.hero-left {
+  flex: 1 1 45%;
+  min-width: 280px;
+}
+
+.hero-left h1 {
+  font-size: 2.8rem;
+  margin-bottom: 15px;
+  line-height: 1.2;
+}
+
+.hero-left p {
+  font-size: 1.1rem;
+  color: #ddd;
+  margin-bottom: 25px;
+}
+
+/* Hero CTA Button */
+.hero-cta {
+  margin-top: 25px;
+}
+
+.join-tournament-btn {
+  display: inline-block;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #e63946, #ff6600);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: all 0.25s ease-in-out;
+  box-shadow: 0 4px 12px rgba(230, 57, 70, 0.4);
+}
+
+.join-tournament-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(255, 102, 0, 0.6);
+  background: linear-gradient(135deg, #ff6600, #e63946);
+}
+
+/* ==============================
+    SLIDESHOW
+   ============================== */
+.slideshow-container {
+  flex: 1 1 45%;
+  max-width: 480px;
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.slide {
+  display: none;
+  animation: fade 1.5s ease;
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+@keyframes fade {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}
+
+/* ==============================
+   TOURNAMENT SECTION
+   ============================== */
+.tournament-section {
+  padding: 80px 5%;
+  background: #111;
+  color: #fff;
+}
+
+.section-title {
+  font-size: 2rem;
+  margin-bottom: 40px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.tournament-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+.tournament-card {
+  background: #1e1e1e;
+  border-radius: 16px;
+  overflow: hidden;
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.tournament-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 102, 0, 0.5);
+}
+
+.tournament-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.tournament-info {
+  padding: 20px;
+}
+
+.tournament-info h3 {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+}
+
+.tournament-info p {
+  color: #ccc;
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+}
+
+/* Reusable Button */
+.btn {
+  background: linear-gradient(90deg, #ff6600, #ff0000);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 10px;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+/* ==============================
+   LOGIN MODAL (NEW LOOK)
+   ============================== */
+.styled-modal {
+  background: linear-gradient(145deg, #1c1c1c, #252525);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 0 25px rgba(255, 94, 0, 0.4);
+  padding: 40px 30px;
+  width: 420px;
+  color: #fff;
+  text-align: center;
+  animation: popIn 0.3s ease-out;
+}
+
+.styled-modal h2 {
+  color: var(--accent);
+  margin-bottom: 10px;
+  font-size: 1.6rem;
+  letter-spacing: 0.5px;
+}
+
+.styled-modal p {
+  color: #ccc;
+  margin-bottom: 25px;
+  font-size: 0.95rem;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.modal-btn {
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+  text-decoration: none;
+}
+
+.modal-btn.primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.modal-btn.accent {
+  background: linear-gradient(135deg, #ff6600, #e63946);
+  color: #fff;
+}
+
+.modal-btn.neutral {
+  background: #333;
+  color: #bbb;
+}
+
+.modal-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(255, 94, 0, 0.5);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+    /* === HERO JOIN BUTTON === */
+    .hero-cta {
+      margin-top: 25px;
+    }
+
+    .join-tournament-btn {
+      display: inline-block;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #e63946, #ff6600);
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 12px;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      transition: all 0.25s ease-in-out;
+      box-shadow: 0 4px 12px rgba(230, 57, 70, 0.4);
+    }
+
+    .join-tournament-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 18px rgba(255, 102, 0, 0.6);
+      background: linear-gradient(135deg, #ff6600, #e63946);
+    }
+
+
+/* ==============================
+    RESPONSIVE DESIGN
+   ============================== */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero-left {
+    max-width: 100%;
+  }
+
+  .slideshow-container {
+    max-width: 100%;
+  }
+}

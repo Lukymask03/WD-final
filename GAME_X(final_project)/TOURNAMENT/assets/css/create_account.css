@@ -1,0 +1,133 @@
+/* =======================================
+   CREATE ACCOUNT PAGE - FINAL OPTIMIZED
+======================================= */
+
+/* Center layout and dark background */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #0e0e0e;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+}
+
+/* Main white container */
+.container {
+    width: 380px;
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 14px;
+    box-shadow: 0 0 20px rgba(255, 102, 0, 0.25);
+    text-align: center;
+}
+
+/* Heading */
+h2 {
+    color: #ff6600;
+    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+/* Input fields and dropdown */
+input,
+select {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+/* Password input + icon wrapper */
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper i {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ff6600;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.password-wrapper i:hover {
+    color: #e55b00;
+}
+
+/* Strength bar section */
+#strength-container {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+#strength-bar {
+    height: 5px;
+    width: 0;
+    border-radius: 4px;
+    transition: width 0.3s, background-color 0.3s;
+}
+
+/* Buttons */
+button,
+a.back-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+/* Create Account button */
+button {
+    background-color: #ff6600;
+    color: #fff;
+}
+
+button:hover {
+    background-color: #e55b00;
+}
+
+/* Back to Login button */
+a.back-btn {
+    background-color: #fff;
+    color: #ff6600;
+    border: 2px solid #ff6600;
+}
+
+a.back-btn:hover {
+    background-color: #ff6600;
+    color: #fff;
+}
+
+/* Player and Organizer fields */
+#player-fields,
+#organizer-fields {
+    display: none;
+    margin-top: 10px;
+    text-align: left;
+}
+
+/* Responsive fix for smaller screens */
+@media (max-width: 420px) {
+    .container {
+        width: 90%;
+        padding: 25px;
+    }
+}
+

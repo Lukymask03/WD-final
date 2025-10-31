@@ -1,0 +1,35 @@
+.container {
+  width: 80%;
+  margin: 40px auto;
+  text-align: center;
+}
+.invite-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+.invite-table th, .invite-table td {
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+.accept-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.reject-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.inline-form {
+  display: inline;
+}
+.message {
+  color: #007bff;
+  margin-bottom: 15px;
+}

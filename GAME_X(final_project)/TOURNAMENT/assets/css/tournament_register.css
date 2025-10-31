@@ -1,0 +1,91 @@
+body {
+  background: #111;
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  padding: 40px;
+}
+
+.register-card {
+  background: #1e1e1e;
+  padding: 40px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 0 20px rgba(255, 102, 0, 0.4);
+}
+
+.register-card h2 {
+  margin-bottom: 10px;
+  font-size: 1.8rem;
+}
+
+.tournament-desc {
+  color: #ccc;
+  margin-bottom: 25px;
+  font-size: 0.95rem;
+}
+
+.register-form label {
+  display: block;
+  margin: 10px 0 5px;
+  font-weight: 500;
+}
+
+.register-form input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  margin-bottom: 15px;
+}
+
+.btn {
+  background: linear-gradient(90deg, #ff6600, #ff0000);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+  width: 100%;
+  font-size: 1rem;
+}
+
+.btn:hover {
+  opacity: 0.85;
+}
+
+.error {
+  color: #ff4d4d;
+  background: rgba(255, 77, 77, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.success {
+  color: #4dff88;
+  background: rgba(77, 255, 136, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.back-btn {
+  display: inline-block;
+  margin-top: 20px;
+  color: #ff6600;
+  text-decoration: none;
+}
