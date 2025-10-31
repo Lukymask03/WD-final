@@ -138,30 +138,7 @@ $my_tournaments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
 
 <!-- ========== NAVBAR ========== -->
-<header class="navbar">
-  <div class="logo">
-    <a href="player_dashboard.php" class="logo-link">
-      <img src="../assets/images/game_x_logo.png" alt="Game X Community" class="logo-img" />
-      <h1><span class="highlight-orange">GAME</span><span class="highlight-red"> X</span></h1>
-    </a>
-  </div>
-
-  <nav>
-    <a href="player_dashboard.php">Dashboard</a>
-    <a href="register_tournament.php">Register Tournament</a>
-    <a href="create_team.php">Create Team</a>
-    <a href="invite_player.php">Invite Player</a>
-    <a href="invitations.php">Invitations</a>
-    <a href="respond_invite.php">Respond to Invitations</a>
-    <a href="my_registrations.php" class="active">My Tournaments</a>
-    <a href="player_contact.php">Support</a>
-  </nav>
-
-  <div class="nav-actions">
-    <button id="darkModeToggle" class="darkmode-btn">Dark Mode</button>
-    <a href="../auth/logout.php" class="cta-btn">Logout</a>
-  </div>
-</header>
+<?php require_once "../includes/player/player_navbar.php"; ?>
 
 <!-- ========== MAIN CONTENT ========== -->
 <section class="tournament-section">
