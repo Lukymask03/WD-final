@@ -220,9 +220,9 @@ foreach ($members as $member) {
         <p>&copy; <?= date("Y") ?> Game X Community. All rights reserved.</p>
     </footer>
 
-    <script src="../assets/js/sweetalert2.all.min.js"></script>
     <script src="../assets/js/darkmode_toggle.js"></script>
     <script src="../assets/js/index.js"></script>
+    <script src="../assets/js/sweetalert2.all.min.js"></script>
     <script>
         function openInviteModal() {
             document.getElementById('invitePlayerModal').style.display = 'flex';

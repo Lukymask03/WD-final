@@ -20,7 +20,7 @@ $isPlayer = isset($_SESSION['role']) && $_SESSION['role'] === 'player';
     <a href="player_dashboard.php">Dashboard</a>
     <a href="register_tournament.php">Register Tournament</a>
     <a href="teams.php">Teams</a>
-    <a href="invite_player.php">Invite Player</a>
+    <a href="invitations.php">Invite Player</a>
     <a href="my_registrations.php">My Tournaments</a>
     <a href="player_contact.php">Support</a>
   </nav>

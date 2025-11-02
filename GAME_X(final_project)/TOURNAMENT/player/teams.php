@@ -295,9 +295,9 @@ $player_game_teams = $player_teams_stmt->fetchAll(PDO::FETCH_COLUMN);
         <p>&copy; <?= date("Y") ?> Game X Community. All rights reserved.</p>
     </footer>
 
-    <script src="../assets/js/sweetalert2.all.min.js"></script>
     <script src="../assets/js/darkmode_toggle.js"></script>
     <script src="../assets/js/index.js"></script>
+    <script src="../assets/js/sweetalert2.all.min.js"></script>
     <script>
         function filterByGame(game) {
             window.location.href = 'teams.php?game=' + encodeURIComponent(game);

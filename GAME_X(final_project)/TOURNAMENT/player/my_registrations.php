@@ -164,7 +164,7 @@ $my_tournaments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
   <?php else: ?>
     <div class="no-data">
-      <img src="../assets/image/VALORANT.png" alt="No Registrations">
+      <img src="../assets/images/game_x_logo.png" alt="No Registrations">
       <p>You haven’t registered for any tournaments yet.</p>
       <a href="register_tournament.php" class="join-btn">Join One Now</a>
     </div>
