@@ -56,7 +56,7 @@ try {
       <h1>Welcome, <span class="highlight"><?= htmlspecialchars($username) ?></span></h1>
       <p>Your role: <strong>Player</strong></p>
       <div class="quick-actions">
-        <a href="create_team.php" class="cta-btn">+ Create Team</a>
+        <a href="teams.php" class="cta-btn">+ Create Team</a>
         <a href="register_tournament.php" class="cta-btn">Register Tournament</a>
       </div>
     </section>

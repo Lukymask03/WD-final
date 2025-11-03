@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 31, 2025 at 10:25 AM
+-- Generation Time: Nov 02, 2025 at 04:15 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -79,6 +79,20 @@ INSERT INTO `games` (`game_id`, `game_name`, `game_icon`, `game_image`, `is_acti
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `messages`
+--
+
+CREATE TABLE `messages` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `message` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `organizer_profiles`
 --
 
@@ -141,7 +155,8 @@ CREATE TABLE `teams` (
 --
 
 INSERT INTO `teams` (`team_id`, `team_name`, `game_name`, `introduction`, `team_logo`, `max_members`, `created_by`, `created_at`) VALUES
-(1, 'CCS', 'Valorant', 'CCS qpals', 'assets/images/teams/team_6904621a35fd2.png', 5, 7, '2025-10-31 07:15:38');
+(1, 'CCS', 'Valorant', 'CCS qpals', 'assets/images/teams/team_6904621a35fd2.png', 5, 7, '2025-10-31 07:15:38'),
+(2, 'DARK MINISTRY', 'Valorant', 'THE TEAM MUST BE IN BALANCE', 'assets/images/teams/team_690769ee7abf0.png', 5, 2, '2025-11-02 14:25:50');
 
 -- --------------------------------------------------------
 
@@ -176,7 +191,8 @@ CREATE TABLE `team_members` (
 --
 
 INSERT INTO `team_members` (`team_id`, `account_id`, `role`, `joined_at`) VALUES
-(1, 7, 'leader', '2025-10-31 07:15:38');
+(1, 7, 'leader', '2025-10-31 07:15:38'),
+(2, 2, 'leader', '2025-11-02 14:25:50');
 
 -- --------------------------------------------------------
 
@@ -214,6 +230,12 @@ ALTER TABLE `accounts`
 ALTER TABLE `games`
   ADD PRIMARY KEY (`game_id`),
   ADD UNIQUE KEY `game_name` (`game_name`);
+
+--
+-- Indexes for table `messages`
+--
+ALTER TABLE `messages`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `organizer_profiles`
@@ -285,6 +307,12 @@ ALTER TABLE `games`
   MODIFY `game_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT for table `messages`
+--
+ALTER TABLE `messages`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `organizer_profiles`
 --
 ALTER TABLE `organizer_profiles`
@@ -306,7 +334,7 @@ ALTER TABLE `registrations`
 -- AUTO_INCREMENT for table `teams`
 --
 ALTER TABLE `teams`
-  MODIFY `team_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `team_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `team_invitations`
