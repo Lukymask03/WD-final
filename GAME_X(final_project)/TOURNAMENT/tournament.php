@@ -1,6 +1,8 @@
 <?php
 session_start();
-require_once "backend/db.php";
+include 'backend/db.php';
+
+ 
 
 // Detect if user is logged in
 $isLoggedIn = isset($_SESSION['account_id']);
@@ -312,7 +314,42 @@ function renderValorantTournaments($conn, $isLoggedIn, $userRole)
   <button id="scrollToTop" class="scroll-to-top">
     <i class="fas fa-arrow-up"></i>
   </button>
+  <!---   SCRIPTS -->
+  <script>
+     document.getElementById("tournament-form").addEventListener("submit", function(event) {
+     event.preventDefault();
 
+      // Send form data to the server
+       fetch("/create-tournament", {
+         method: "POST",
+          headers: {
+             "Content-Type": "application/x-www-form-urlencoded"
+          },
+         body: new URLSearchParams(new FormData(event.target))
+       })
+      .then(response => response.json())
+      .then(data => {
+         if (data.success) {
+             // Display success message
+             const successMessage = document.querySelector('.success-message');
+             successMessage.textContent = data.message;
+            
+             // Redirect to the tournament page
+             setTimeout(() => {
+                 window.location.href = "/tournament.php?id=" + data.tournament_id;
+             }, 2000);
+          } else {
+             // Display error message
+             const errorMessage = document.querySelector('.error-message');
+             errorMessage.textContent = data.error;
+          }
+     })
+       .catch(error => {
+         // Handle any errors
+         console.error(error);
+       });
+    });
+  </script>
   <script src="assets/js/tournament.js"></script>
   <script src="assets/js/darkmode.js"></script>
   <script src="assets/js/index.js"></script>

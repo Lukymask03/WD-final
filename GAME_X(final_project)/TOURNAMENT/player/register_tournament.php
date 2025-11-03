@@ -63,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         ]);
 
         if ($check->rowCount() > 0) {
-            $message = "⚠️ This team is already registered for that tournament.";
+            $message = "This team is already registered for that tournament.";
             $message_type = "error";
         } else {
             try {
@@ -78,16 +78,50 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     'reg_time' => date("Y-m-d H:i:s")
                 ]);
 
-                $message = "✅ Team successfully registered for the tournament!";
+                $message = "Team successfully registered for the tournament!";
                 $message_type = "success";
             } catch (PDOException $e) {
-                $message = "❌ Registration failed: " . htmlspecialchars($e->getMessage());
+                $message = "Registration failed: " . htmlspecialchars($e->getMessage());
                 $message_type = "error";
             }
         }
     } else {
-        $message = "⚠️ Please select both a team and a tournament.";
+        $message = "Please select both a team and a tournament.";
         $message_type = "error";
+    }
+}
+
+// Fetch the updated tournament data
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // ... existing code ...
+
+    // Display the updated tournament data
+    if (isset($_POST["tournament_id"])) {
+        $tournament_id = $_POST["tournament_id"];
+        $stmt = $conn->prepare("
+            SELECT *
+            FROM tournaments
+            WHERE tournament_id = :tid
+        ");
+        $stmt->execute([
+            'tid' => $tournament_id
+        ]);
+        $tournament = $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    if ($tournament) {
+        ?>
+        <div class="tournament-card">
+            <h3><?php echo htmlspecialchars($tournament['title']); ?></h3>
+            <p><?php echo htmlspecialchars($tournament['description']); ?></p>
+            <p>Starts: <?php echo date('F d, Y', strtotime($tournament['start_date'])); ?></p>
+            <p>Ends: <?php echo date('F d, Y', strtotime($tournament['end_date'])); ?></p>
+            <p>Registration Starts: <?php echo date('F d, Y', strtotime($tournament['reg_start_date'])); ?></p>
+            <p>Registration Ends: <?php echo date('F d, Y', strtotime($tournament['reg_end_date'])); ?></p>
+            <p>Status: <?php echo htmlspecialchars($tournament['status']); ?></p>
+            <!-- Add more fields as needed -->
+        </div>
+        <?php
     }
 }
 ?>
