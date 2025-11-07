@@ -5,7 +5,7 @@ require_once "../backend/helpers/log_activity.php";
 
 // Log activity *before* destroying session
 if (isset($_SESSION['account_id']) && isset($_SESSION['role'])) {
-    logActivity($conn, $_SESSION['account_id'], "Logout ({$_SESSION['role']})");
+    logActivity($_SESSION['account_id'], "Logout ({$_SESSION['role']})");
 }
 
 // Unset all session variables
