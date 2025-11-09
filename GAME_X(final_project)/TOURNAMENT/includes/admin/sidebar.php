@@ -4,15 +4,17 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Check if user is admin
+// Restrict access to admin only
 if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
     header("Location: ../auth/login.php");
-    exit;
+    exit();
 }
 
+// Get current page name
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 <link rel="stylesheet" href="../assets/css/admin_sidebar.css">
+
 <!-- Sidebar -->
 <aside class="sidebar">
     <div class="sidebar-header">
@@ -23,6 +25,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     </div>
 
     <nav class="sidebar-menu">
+        <!-- Main Section -->
         <div class="menu-section">
             <div class="menu-section-title">Main</div>
             <a href="admin_dashboard.php" class="menu-item <?= $current_page === 'admin_dashboard.php' ? 'active' : '' ?>">
@@ -31,6 +34,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </a>
         </div>
 
+        <!-- Management Section -->
         <div class="menu-section">
             <div class="menu-section-title">Management</div>
             <a href="users.php" class="menu-item <?= $current_page === 'users.php' ? 'active' : '' ?>">
@@ -51,6 +55,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </a>
         </div>
 
+        <!-- System Section -->
         <div class="menu-section">
             <div class="menu-section-title">System</div>
             <a href="audit_logs.php" class="menu-item <?= $current_page === 'audit_logs.php' ? 'active' : '' ?>">
@@ -64,4 +69,3 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </div>
     </nav>
 </aside>
-

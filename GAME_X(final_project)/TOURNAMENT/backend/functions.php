@@ -1,6 +1,10 @@
 <?php
 require_once __DIR__ . '/db.php';
-session_start();
+
+// Start session only if none exists
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 /**
  * Sanitize input for security

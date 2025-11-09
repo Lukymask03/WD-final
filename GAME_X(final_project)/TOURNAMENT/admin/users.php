@@ -1,32 +1,37 @@
 <?php
-require_once __DIR__ . '/../backend/db.php';
-require_once __DIR__ . '/../backend/helpers/auth_guard.php';
-require_once __DIR__ . '/../backend/helpers/log_activity.php';
+// Start session safely
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-// ✅ Protect the page for admins only
+// Absolute path to the project root (first GAME_X(final_project))
+$projectRoot = realpath(__DIR__ . '/../../..'); // Adjust relative to users.php
+
+// Include backend files
+require_once $projectRoot . '/backend/db.php';
+require_once $projectRoot . '/backend/helpers/auth_guard.php';
+require_once $projectRoot . '/backend/helpers/log_activity.php';
+
+// Protect page for admins only
 checkAuth('admin');
 
-// ✅ Get total users, active users, offline users
-$totalUsers = $conn->query("SELECT COUNT(*) AS total FROM accounts")->fetch()['total'];
-$activeUsers = $conn->query("SELECT COUNT(*) AS active FROM accounts WHERE status = 'active'")->fetch()['active'];
-$offlineUsers = $conn->query("SELECT COUNT(*) AS offline FROM accounts WHERE status = 'offline'")->fetch()['offline'];
 
-// ✅ Get user type counts (Player and Organizer)
-$userTypes = $conn->query("
-    SELECT role, COUNT(*) AS count 
-    FROM accounts 
-    GROUP BY role
-")->fetchAll(PDO::FETCH_ASSOC);
+// Get total users, active users, suspended users
+$totalUsers   = $conn->query("SELECT COUNT(*) AS total FROM accounts")->fetch()['total'];
+$activeUsers  = $conn->query("SELECT COUNT(*) AS active FROM accounts WHERE account_status = 'active'")->fetch()['active'];
+$suspendedUsers = $conn->query("SELECT COUNT(*) AS suspended FROM accounts WHERE account_status = 'suspended'")->fetch()['suspended'];
 
-// ✅ Prepare data for Chart.js
+// User role counts
+$userTypes = $conn->query("SELECT role, COUNT(*) AS count FROM accounts GROUP BY role")->fetchAll(PDO::FETCH_ASSOC);
+
 $roles = [];
 $counts = [];
 foreach ($userTypes as $row) {
-    $roles[] = ucfirst($row['role']);
+    $roles[]  = ucfirst($row['role']);
     $counts[] = $row['count'];
 }
 
-// ✅ Log Activity
+// Log activity
 $account_id = $_SESSION['account_id'] ?? 0;
 logActivity($conn, $account_id, 'View Users', 'Admin viewed user analytics');
 ?>
@@ -36,6 +41,8 @@ logActivity($conn, $account_id, 'View Users', 'Admin viewed user analytics');
 <head>
     <meta charset="UTF-8">
     <title>Users Management | Admin</title>
+    <link rel="stylesheet" href="<?= $projectRoot ?>/assets/css/common.css"> 
+    <link rel="stylesheet" href="<?= $projectRoot ?>/assets/css/admin_dashboard.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>

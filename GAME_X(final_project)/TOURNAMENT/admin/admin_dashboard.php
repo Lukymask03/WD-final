@@ -676,37 +676,38 @@ if ($logs > 0) {
         </div>
       </div>
 
-      <!-- Quick Actions -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">
+<!-- Quick Actions -->
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">
             <i class="fas fa-bolt"></i>
             Quick Actions
-          </div>
         </div>
-        <div class="quick-actions">
-          <a href="users.php" class="quick-action-btn">
+    </div>
+    <div class="quick-actions">
+        <a href="/GAME_X(final_project)/users.php" class="quick-action-btn">
             <i class="fas fa-user-plus"></i>
             <span>Add User</span>
-          </a>
-          <a href="games.php" class="quick-action-btn">
+        </a>
+        <a href="/GAME_X(final_project)/games.php" class="quick-action-btn">
             <i class="fas fa-gamepad"></i>
             <span>Manage Games</span>
-          </a>
-          <a href="tournaments.php" class="quick-action-btn">
+        </a>
+        <a href="/GAME_X(final_project)/tournaments.php" class="quick-action-btn">
             <i class="fas fa-trophy"></i>
             <span>View Tournaments</span>
-          </a>
-          <a href="audit_logs.php" class="quick-action-btn">
+        </a>
+        <a href="/GAME_X(final_project)/admin/audit_logs.php" class="quick-action-btn">
             <i class="fas fa-clipboard-list"></i>
             <span>System Logs</span>
-          </a>
-        </div>
-      </div>
+        </a>
+    </div>
+</div>
+
     </div>
   </div>
 
-  <script src="../assets/js/darkmode_toggle.js"></script>
+  <script src="../assets/js/darkmode.js"></script>
   <script src="../assets/js/index.js"></script>
 </body>
 

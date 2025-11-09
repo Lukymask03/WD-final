@@ -2,8 +2,12 @@
 session_start();
 require_once "../backend/db.php";
 
+// Check if player is logged in
+if (!isset($_SESSION['account_id'])) {
+    header('Location: ../auth/login.php');
+    exit;
+}
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -21,9 +25,11 @@ require_once "../backend/db.php";
 
 <!-- ===== CONTACT SECTION ===== -->
 <section class="contact-section">
+  
+  <!-- LEFT SIDE: CONTACT INFO CARD -->
   <div class="contact-info">
     <h2>Get in Touch</h2>
-    <p>We’d love to hear from you! Whether you’re a gamer, sponsor, or event organizer — reach out to us for any inquiries, collaborations, or feedback.</p>
+    <p>We’d love to hear from you! Reach out for inquiries, collaborations, or feedback.</p>
 
     <div class="contact-details">
       <p><strong>Email:</strong> support@gamexhub.com</p>
@@ -38,6 +44,24 @@ require_once "../backend/db.php";
       <a href="https://twitter.com/GameXHub" class="btn" target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
     </div>
   </div>
+
+  <!-- RIGHT SIDE: FEEDBACK CARD -->
+  <div class="contact-form">
+    <h2>Send Feedback</h2>
+    <p style="color:#aaa; margin-bottom:15px;">We value your thoughts! Tell us what you think about your experience with GameX.</p>
+
+    <?php if(isset($_GET['success'])): ?>
+      <p style="color:green;">Your message has been sent successfully!</p>
+    <?php elseif(isset($_GET['error'])): ?>
+      <p style="color:red;">Please enter a message before sending.</p>
+    <?php endif; ?>
+
+    <form action="player_feedback_submit.php" method="POST">
+      <textarea name="message" placeholder="Your Feedback..." required></textarea>
+      <button type="submit">Send Feedback</button>
+    </form>
+  </div>
+
 </section>
 
 <!-- ===== FOOTER ===== -->
