@@ -685,19 +685,19 @@ if ($logs > 0) {
         </div>
     </div>
     <div class="quick-actions">
-        <a href="/GAME_X(final_project)/users.php" class="quick-action-btn">
-            <i class="fas fa-user-plus"></i>
-            <span>Add User</span>
+        <a href="users.php" class="quick-action-btn">
+            <i class="fas fa-users"></i>
+            <span>User Management</span>
         </a>
-        <a href="/GAME_X(final_project)/games.php" class="quick-action-btn">
+        <a href="games.php" class="quick-action-btn">
             <i class="fas fa-gamepad"></i>
             <span>Manage Games</span>
         </a>
-        <a href="/GAME_X(final_project)/tournaments.php" class="quick-action-btn">
+        <a href="tournaments.php" class="quick-action-btn">
             <i class="fas fa-trophy"></i>
             <span>View Tournaments</span>
         </a>
-        <a href="/GAME_X(final_project)/admin/audit_logs.php" class="quick-action-btn">
+        <a href="audit_logs.php" class="quick-action-btn">
             <i class="fas fa-clipboard-list"></i>
             <span>System Logs</span>
         </a>

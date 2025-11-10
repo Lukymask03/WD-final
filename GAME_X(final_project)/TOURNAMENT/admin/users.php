@@ -1,210 +1,139 @@
 <?php
-// Start session safely
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+session_start();
+require_once "../backend/db.php"; 
+
+// Restrict access to admin only
+if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
+    header("Location: ../auth/login.php");
+    exit();
 }
 
-// Absolute path to the project root (first GAME_X(final_project))
-$projectRoot = realpath(__DIR__ . '/../../..'); // Adjust relative to users.php
+// Fetch user counts
+$playerCount = 0;
+$organizerCount = 0;
 
-// Include backend files
-require_once $projectRoot . '/backend/db.php';
-require_once $projectRoot . '/backend/helpers/auth_guard.php';
-require_once $projectRoot . '/backend/helpers/log_activity.php';
-
-// Protect page for admins only
-checkAuth('admin');
-
-
-// Get total users, active users, suspended users
-$totalUsers   = $conn->query("SELECT COUNT(*) AS total FROM accounts")->fetch()['total'];
-$activeUsers  = $conn->query("SELECT COUNT(*) AS active FROM accounts WHERE account_status = 'active'")->fetch()['active'];
-$suspendedUsers = $conn->query("SELECT COUNT(*) AS suspended FROM accounts WHERE account_status = 'suspended'")->fetch()['suspended'];
-
-// User role counts
-$userTypes = $conn->query("SELECT role, COUNT(*) AS count FROM accounts GROUP BY role")->fetchAll(PDO::FETCH_ASSOC);
-
-$roles = [];
-$counts = [];
-foreach ($userTypes as $row) {
-    $roles[]  = ucfirst($row['role']);
-    $counts[] = $row['count'];
+try {
+    $stmt = $conn->query("SELECT role, COUNT(*) as total FROM accounts WHERE is_admin = 0 GROUP BY role");
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        if ($row['role'] === 'player') $playerCount = $row['total'];
+        elseif ($row['role'] === 'organizer') $organizerCount = $row['total'];
+    }
+} catch (PDOException $e) {
+    die("Database error: " . $e->getMessage());
 }
 
-// Log activity
-$account_id = $_SESSION['account_id'] ?? 0;
-logActivity($conn, $account_id, 'View Users', 'Admin viewed user analytics');
+// ✅ Correct include for sidebar
+include('../includes/admin/sidebar.php');
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Users Management | Admin</title>
-    <link rel="stylesheet" href="<?= $projectRoot ?>/assets/css/common.css"> 
-    <link rel="stylesheet" href="<?= $projectRoot ?>/assets/css/admin_dashboard.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users Management | Admin Panel</title>
+    <link rel="stylesheet" href="../assets/css/common.css">
+    <link rel="stylesheet" href="../assets/css/admin_sidebar.css">
+    <link rel="stylesheet" href="../assets/css/admin_dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        :root {
-            --bg-main: #ffffff;
-            --bg-secondary: #f5f6fa;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --border: #e5e7eb;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
+            background-color: #f4f5f7;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-secondary);
-            color: var(--text-main);
+            margin: 0;
+            color: #1f2937;
         }
 
-        main {
+        .main-content {
             margin-left: 260px;
             padding: 30px;
         }
 
-        .dashboard-header {
+        .page-header {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ff6600;
             margin-bottom: 25px;
         }
 
-        .dashboard-header h1 {
-            font-size: 1.8rem;
-            color: var(--text-main);
-        }
-
-        .dashboard-header p {
-            color: var(--text-muted);
-            margin-top: 5px;
-            font-size: 0.95rem;
-        }
-
-        /* Cards Grid */
-        .cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        .card-container {
+            display: flex;
             gap: 20px;
-            margin-bottom: 30px;
+            flex-wrap: wrap;
         }
 
         .card {
-            background: var(--bg-main);
-            border: 1px solid var(--border);
+            background-color: white;
             border-radius: 12px;
-            padding: 20px;
-            transition: all 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            flex: 1;
+            min-width: 280px;
         }
 
         .card h3 {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            margin-bottom: 10px;
+            margin: 0;
+            font-size: 20px;
+            color: #333;
         }
 
-        .card p {
-            font-size: 2rem;
+        .count {
+            font-size: 40px;
+            color: #ff6600;
             font-weight: 700;
-            color: var(--text-main);
+            margin-top: 10px;
         }
 
-        /* Chart Section */
-        .chart-card {
-            background: var(--bg-main);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 25px;
-        }
-
-        .chart-card h3 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 20px;
-        }
-
-        #userChart {
-            width: 100%;
-            height: 350px;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            main {
-                margin-left: 0;
-                padding: 20px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .cards-container {
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            }
-
-            .card p {
-                font-size: 1.6rem;
-            }
+        canvas {
+            margin-top: 25px;
+            max-width: 500px;
         }
     </style>
 </head>
 <body>
-    <?php include '../includes/admin/sidebar.php'; ?>
 
-    <main>
-        <div class="dashboard-header">
-            <h1>Users Overview</h1>
-            <p>Manage and monitor platform user statistics.</p>
-        </div>
+<?php include __DIR__ . '/../includes/admin/sidebar.php'; ?>
 
-        <!-- Summary Cards -->
-        <div class="cards-container">
+    <main class="main-content">
+        <div class="page-header"><i class="fas fa-users"></i> User Management</div>
+
+        <!-- Stats Overview -->
+        <div class="card-container">
+            <div class="card">
+                <h3>Total Players</h3>
+                <div class="count"><?= $playerCount ?></div>
+            </div>
+            <div class="card">
+                <h3>Total Organizers</h3>
+                <div class="count"><?= $organizerCount ?></div>
+            </div>
             <div class="card">
                 <h3>Total Users</h3>
-                <p><?= $totalUsers ?></p>
-            </div>
-
-            <div class="card">
-                <h3>Active Users</h3>
-                <p><?= $activeUsers ?></p>
-            </div>
-
-            <div class="card">
-                <h3>Offline Users</h3>
-                <p><?= $offlineUsers ?></p>
+                <div class="count"><?= $playerCount + $organizerCount ?></div>
             </div>
         </div>
 
         <!-- Chart Section -->
-        <div class="chart-card">
-            <h3>User Distribution</h3>
+        <div class="card" style="margin-top: 30px;">
+            <h3><i class="fas fa-chart-pie"></i> User Distribution</h3>
             <canvas id="userChart"></canvas>
         </div>
     </main>
 
     <script>
-        const ctx = document.getElementById('userChart');
+        const ctx = document.getElementById('userChart').getContext('2d');
         new Chart(ctx, {
-            type: 'pie',
+            type: 'doughnut',
             data: {
-                labels: <?= json_encode($roles) ?>,
+                labels: ['Players', 'Organizers'],
                 datasets: [{
                     label: 'User Roles',
-                    data: <?= json_encode($counts) ?>,
-                    backgroundColor: ['#3b82f6', '#a855f7', '#f59e0b'],
-                    borderColor: '#fff',
+                    data: [<?= $playerCount ?>, <?= $organizerCount ?>],
+                    backgroundColor: ['#ff6600', '#ffb347'],
+                    borderColor: ['#ffffff', '#ffffff'],
                     borderWidth: 2
                 }]
             },
@@ -212,10 +141,11 @@ logActivity($conn, $account_id, 'View Users', 'Admin viewed user analytics');
                 responsive: true,
                 plugins: {
                     legend: { position: 'bottom' },
-                    title: { display: true, text: 'Player and Organizer Distribution' }
+                    title: { display: true, text: 'Distribution of User Roles' }
                 }
             }
         });
     </script>
+
 </body>
 </html>
