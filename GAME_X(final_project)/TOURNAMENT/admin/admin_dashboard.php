@@ -529,7 +529,13 @@ if ($logs > 0) {
 </head>
 
 <body>
-  <?php require_once "../includes/admin/sidebar.php"; ?>
+  <body>
+
+<?php include "../includes/admin/admin_header.php"; ?>
+<?php include "../includes/admin/sidebar.php"; ?>
+
+<!-- your page content below -->
+
 
   <!-- Main Content -->
   <div class="main-content">

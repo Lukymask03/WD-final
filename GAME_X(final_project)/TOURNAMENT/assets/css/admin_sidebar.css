@@ -102,3 +102,22 @@
         margin-left: 0;
     }
 }
+
+/* Slide-out Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100%;
+    background: var(--bg-secondary);
+    border-right: 2px solid var(--border);
+    transform: translateX(-100%);
+    transition: 0.3s ease-in-out;
+    z-index: 3000; /* Forces on top */
+}
+
+/* When active: visible */
+.sidebar.active {
+    transform: translateX(0);
+}

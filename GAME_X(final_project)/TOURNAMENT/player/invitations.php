@@ -97,8 +97,10 @@ $invitations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
 
     <!-- ========== NAVBAR ========== -->
-<?php require_once "../includes/player/player_navbar.php"; ?>
-
+<?php require_once "../includes/player/player_nav.php"; ?>
+<?php include "../includes/player/player_sidebar.php"; ?>
+<div class="layout">
+<div class="player-content">
     <div class="container">
         <h2>My Invitations</h2>
         <?php if (!empty($message)) echo "<p class='msg'>$message</p>"; ?>
@@ -139,7 +141,9 @@ $invitations = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <?php else: ?>
             <p style="text-align:center;">No invitations found.</p>
         <?php endif; ?>
-    </div>    
+     </div>
+   </div> 
+ </div>   
   <script src="../assets/js/darkmode_toggle.js"></script>
   <script src="../assets/js/index.js"></script>
 </body>

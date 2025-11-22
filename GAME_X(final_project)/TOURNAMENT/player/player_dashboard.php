@@ -47,8 +47,13 @@ try {
 
 <body>
   <!-- ========== NAVBAR ========== -->
-  <?php require_once "../includes/player/player_navbar.php"; ?>
+  <?php require_once "../includes/player/player_sidebar.php"; ?>
+  <?php require_once "../includes/player/player_nav.php"; ?>
 
+<div class="layout">
+
+<div class="player-content">
+  
   <!-- === MAIN CONTENT === -->
   <main class="dashboard-container">
     <!-- Welcome Section -->
@@ -116,6 +121,9 @@ try {
   <footer class="footer">
     <p>© 2025 GameX Tournament Platform. All rights reserved.</p>
   </footer>
+</div>
+</div>
+
 </body>
 <!-- SweetAlert2 JS -->
 <script src="../assets/js/sweetalert2.all.min.js"></script>

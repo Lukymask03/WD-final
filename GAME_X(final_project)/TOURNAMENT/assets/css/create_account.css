@@ -131,3 +131,13 @@ a.back-btn:hover {
     }
 }
 
+.player-content {
+    margin-left: 260px; 
+    padding: 20px;
+}
+
+@media (max-width: 900px) {
+    .player-content {
+        margin-left: 80px;
+    }
+}

@@ -50,8 +50,11 @@ $my_teams = $teams_stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <body>
 
-    <?php require_once "../includes/player/player_navbar.php"; ?>
+    <?php require_once "../includes/player/player_sidebar.php"; ?>
+    <?php require_once "../includes/player/player_nav.php"; ?>
 
+<div class="layout">
+    <div class="player-content">
     <main class="teams-container">
         <div class="my-teams-header">
             <div class="header-left">
@@ -118,12 +121,13 @@ $my_teams = $teams_stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
             <?php endif; ?>
         </div>
-    </main>
+    </div>
+</main>
 
     <footer class="footer">
         <p>&copy; <?= date("Y") ?> Game X Community. All rights reserved.</p>
     </footer>
-
+ </div>
     <script src="../assets/js/darkmode_toggle.js"></script>
     <script src="../assets/js/index.js"></script>
 

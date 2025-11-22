@@ -21,8 +21,12 @@ if (!isset($_SESSION['account_id'])) {
 <body>
 
 <!-- ===== NAVBAR ===== -->
-<?php require_once "../includes/player/player_navbar.php"; ?>
+<?php require_once "../includes/player/player_sidebar.php"; ?>
+<?php require_once "../includes/player/player_nav.php"; ?>
 
+<div class="layout">
+
+<div class="player-content">
 <!-- ===== CONTACT SECTION ===== -->
 <section class="contact-section">
   
@@ -61,6 +65,7 @@ if (!isset($_SESSION['account_id'])) {
       <button type="submit">Send Feedback</button>
     </form>
   </div>
+</div>
 
 </section>
 
@@ -68,7 +73,7 @@ if (!isset($_SESSION['account_id'])) {
 <footer class='footer'>
   <p>&copy; <?php echo date('Y'); ?> Game X Community. All rights reserved.</p>
 </footer>
-
+</div>
 <!-- ===== SCRIPTS ===== -->
 <script src='../assets/js/darkmode.js'></script>
 <script src='../assets/js/index.js'></script>

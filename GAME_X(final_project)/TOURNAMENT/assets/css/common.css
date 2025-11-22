@@ -356,6 +356,73 @@ nav a.active::after,
   color: var(--accent);
 }
 
+/*Notification Bell*/
+/* Notification Bell */
+.notification-wrapper {
+    position: relative;
+    margin-right: 20px;
+}
+
+.notif-bell {
+    font-size: 22px;
+    cursor: pointer;
+    color: #ff6600;
+    position: relative;
+}
+
+.notif-count {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #e60000;
+    color: white;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+.notif-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 35px;
+    width: 280px;
+    background: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    z-index: 999;
+}
+
+.notif-dropdown h4 {
+    margin: 10px;
+    color: #ff6600;
+}
+
+.notif-dropdown ul {
+    list-style: none;
+    padding: 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.notif-dropdown li {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+.notif-dropdown li.unread {
+    background: #FFF3E0;
+    font-weight: bold;
+}
+
+.notif-dropdown li:last-child {
+    border-bottom: none;
+}
+
+
+
+
 /* === RESPONSIVE === */
 @media (max-width: 768px) {
   .mobile-menu-toggle {
@@ -397,4 +464,75 @@ nav a.active::after,
     padding: 15px 20px;
     flex-wrap: wrap;
   }
+}
+/* === FIX: Prevent sidebar from covering main content === */
+.player-content,
+.main-content,
+.container,
+.tournament-section,
+.contact-section {
+    margin-left: 260px !important; /* matches sidebar width */
+    padding: 20px;
+}
+
+/* When sidebar auto-collapses on smaller screens */
+@media (max-width: 900px) {
+    .player-content,
+    .main-content,
+    .container,
+    .tournament-section,
+    .contact-section {
+        margin-left: 80px !important;
+    }
+}
+
+.player-main {
+    margin-left: 260px;
+    padding: 20px;
+}
+.burger-btn {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: var(--text-main);
+    margin-left: 15px;
+}
+
+.burger-btn:hover {
+    color: var(--accent);
+}
+
+/* Sidebar Slide Animation */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100%;
+    background: var(--bg-secondary);
+    transform: translateX(-100%);
+    transition: 0.3s ease-in-out;
+    z-index: 2000;
+}
+
+.sidebar.active {
+    transform: translateX(0);
+}
+/* Burger Button */
+.burger-btn {
+    background: var(--bg-card);
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 15px;
+    transition: 0.3s;
+}
+
+.burger-btn:hover {
+    background: var(--accent);
+    color: #fff;
 }

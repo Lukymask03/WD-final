@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 07, 2025 at 05:16 PM
+-- Generation Time: Nov 17, 2025 at 03:24 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -147,7 +147,217 @@ INSERT INTO `audit_logs` (`id`, `account_id`, `action`, `details`, `created_at`)
 (75, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-07 16:11:59'),
 (76, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-07 16:12:03'),
 (77, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-07 16:12:08'),
-(78, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-07 16:12:16');
+(78, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-07 16:12:16'),
+(79, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-07 16:28:30'),
+(80, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-07 16:28:31'),
+(81, 6, 'Logout ()', 'N/A', '2025-11-07 16:28:33'),
+(82, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-07 16:28:48'),
+(83, 6, 'Logout ()', 'N/A', '2025-11-07 16:28:50'),
+(84, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-08 15:33:31'),
+(85, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-08 15:33:42'),
+(86, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-08 15:34:03'),
+(87, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-08 15:34:09'),
+(88, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-08 15:34:12'),
+(89, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-08 15:34:15'),
+(90, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-08 15:34:19'),
+(91, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-08 15:47:44'),
+(92, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-08 15:50:27'),
+(93, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-08 15:51:19'),
+(94, 6, 'Access denied: tried to access player area', 'N/A', '2025-11-08 15:54:39'),
+(95, 6, 'Access denied: tried to access player area', 'N/A', '2025-11-08 15:54:42'),
+(96, 6, 'Logout ()', 'N/A', '2025-11-08 15:54:48'),
+(97, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-08 16:00:49'),
+(98, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-08 16:01:00'),
+(99, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-08 16:02:49'),
+(100, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-08 16:02:50'),
+(101, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-08 16:02:53'),
+(102, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-08 16:08:49'),
+(103, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-08 16:08:52'),
+(104, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-08 16:09:02'),
+(105, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-08 16:09:04'),
+(106, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-08 16:09:06'),
+(107, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-08 16:10:01'),
+(108, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-08 16:10:04'),
+(109, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-08 16:10:33'),
+(110, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-09 13:40:06'),
+(111, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-09 13:40:30'),
+(112, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-09 13:40:46'),
+(113, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-09 13:40:48'),
+(114, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-09 13:40:51'),
+(115, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-09 13:40:52'),
+(116, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-09 13:41:29'),
+(117, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-09 13:41:29'),
+(118, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 13:52:32'),
+(119, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 13:53:01'),
+(120, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 13:53:01'),
+(121, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 13:53:03'),
+(122, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 13:53:05'),
+(123, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 13:53:08'),
+(124, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 13:53:13'),
+(125, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 13:53:29'),
+(126, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 13:53:31'),
+(127, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 13:54:26'),
+(128, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 13:54:28'),
+(129, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 13:54:32'),
+(130, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 13:54:32'),
+(131, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 13:56:01'),
+(132, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 13:56:03'),
+(133, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 13:56:04'),
+(134, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 13:57:33'),
+(135, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 14:00:51'),
+(136, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 14:00:53'),
+(137, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 14:10:51'),
+(138, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 14:10:54'),
+(139, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 14:11:00'),
+(140, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 14:11:07'),
+(141, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 14:11:07'),
+(142, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 14:13:50'),
+(143, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 14:13:50'),
+(144, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 14:13:50'),
+(145, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 14:21:09'),
+(146, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 14:21:21'),
+(147, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 14:21:24'),
+(148, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 14:21:44'),
+(149, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:07:02'),
+(150, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 15:07:06'),
+(151, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:07:20'),
+(152, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:11:41'),
+(153, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:27:21'),
+(154, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:32:07'),
+(155, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:35:11'),
+(156, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:35:24'),
+(157, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:36:46'),
+(158, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:36:49'),
+(159, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:36:49'),
+(160, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:36:49'),
+(161, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:36:50'),
+(162, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:37:16'),
+(163, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:37:17'),
+(164, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:37:17'),
+(165, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:37:41'),
+(166, 6, 'Logout ()', 'N/A', '2025-11-09 15:38:07'),
+(167, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:38:23'),
+(168, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:39:08'),
+(169, 6, 'Access denied: tried to access player area', 'N/A', '2025-11-09 15:39:42'),
+(170, 2, 'Logout (player)', 'N/A', '2025-11-09 15:46:45'),
+(171, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 15:46:54'),
+(172, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-09 16:28:35'),
+(173, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 16:34:50'),
+(174, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-09 16:34:51'),
+(175, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 06:53:43'),
+(176, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 06:54:38'),
+(177, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 06:55:19'),
+(178, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-10 06:55:44'),
+(179, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 06:55:49'),
+(180, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 15:21:09'),
+(181, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 15:21:51'),
+(182, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 15:22:03'),
+(183, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 15:39:08'),
+(184, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 15:53:06'),
+(185, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:03:17'),
+(186, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:05:49'),
+(187, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:13:32'),
+(188, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:14:30'),
+(189, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:14:30'),
+(190, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-10 16:17:07'),
+(191, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:18:59'),
+(192, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-10 16:19:03'),
+(193, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-10 16:19:54'),
+(194, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:20:43'),
+(195, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:21:18'),
+(196, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:21:20'),
+(197, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:21:35'),
+(198, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:21:55'),
+(199, 6, 'Access denied: tried to access admin area', 'N/A', '2025-11-10 16:22:08'),
+(200, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:29:25'),
+(201, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:29:25'),
+(202, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:29:26'),
+(203, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:29:26'),
+(204, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:34:22'),
+(205, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:34:47'),
+(206, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:35:03'),
+(207, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:35:13'),
+(208, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:36:09'),
+(209, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-10 16:36:17'),
+(210, 6, 'Logout ()', 'N/A', '2025-11-10 16:46:34'),
+(211, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-11 15:16:25'),
+(212, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-11 15:18:02'),
+(213, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-11 15:18:04'),
+(214, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-11 15:28:25'),
+(215, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-11 15:28:26'),
+(216, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-11 15:28:28'),
+(217, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-11 15:28:28'),
+(218, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-11 15:28:28'),
+(219, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-11 15:28:29'),
+(220, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-11 15:28:29'),
+(221, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-11 15:28:29'),
+(222, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-11 15:28:31'),
+(223, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-11 15:33:34'),
+(224, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-11 15:34:08'),
+(225, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-11 15:34:14'),
+(226, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-11 15:45:27'),
+(227, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-11 16:02:41'),
+(228, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-11 16:02:55'),
+(229, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-11 16:05:18'),
+(230, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-11 16:05:41'),
+(231, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-11 16:06:03'),
+(232, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-11 16:06:09'),
+(233, 6, 'Access denied: tried to access organizer area', 'N/A', '2025-11-11 16:06:16'),
+(234, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-11 16:07:43'),
+(235, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-11 16:07:58'),
+(236, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-11 16:08:46'),
+(237, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-11 16:12:44'),
+(238, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-11 16:12:52'),
+(239, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-11 17:04:52'),
+(240, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-11 17:05:01'),
+(241, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-12 13:59:45'),
+(242, 3, 'Logout (organizer)', 'N/A', '2025-11-12 14:34:58'),
+(243, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-12 14:35:10'),
+(244, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-12 15:27:27'),
+(245, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-12 15:27:39'),
+(246, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-12 15:32:14'),
+(247, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-13 13:47:06'),
+(248, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-13 13:50:46'),
+(249, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-13 13:50:51'),
+(250, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-13 13:50:54'),
+(251, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-13 14:02:06'),
+(252, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-13 14:02:55'),
+(253, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-13 14:03:00'),
+(254, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-13 14:03:18'),
+(255, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-13 14:03:20'),
+(256, 6, 'Logout ()', 'N/A', '2025-11-13 14:21:19'),
+(257, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-13 15:05:57'),
+(258, 3, 'Logout (organizer)', 'N/A', '2025-11-13 15:59:53'),
+(259, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-13 16:00:08'),
+(260, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-13 16:36:10'),
+(261, 2, 'Logout (player)', 'N/A', '2025-11-16 16:12:28'),
+(262, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-16 16:12:56'),
+(263, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-16 16:13:39'),
+(264, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-16 16:13:47'),
+(265, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-16 16:14:49'),
+(266, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-16 16:34:48'),
+(267, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-16 16:34:49'),
+(268, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-16 16:34:49'),
+(269, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-16 16:34:49'),
+(270, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-16 16:34:50'),
+(271, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-16 16:34:50'),
+(272, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-16 16:34:50'),
+(273, 3, 'View Tournaments', 'Organizer viewed tournament list', '2025-11-16 16:34:50'),
+(274, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 16:53:58'),
+(275, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:04:54'),
+(276, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:04:55'),
+(277, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:04:55'),
+(278, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:04:55'),
+(279, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:04:56'),
+(280, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:09:02'),
+(281, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:09:02'),
+(282, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:09:02'),
+(283, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:09:03'),
+(284, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:23:25'),
+(285, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:23:25'),
+(286, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:23:25'),
+(287, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:23:26'),
+(288, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:23:58');
 
 -- --------------------------------------------------------
 
@@ -206,6 +416,13 @@ CREATE TABLE `organizer_profiles` (
   `contact_no` varchar(20) NOT NULL,
   `website` varchar(150) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `organizer_profiles`
+--
+
+INSERT INTO `organizer_profiles` (`organizer_id`, `account_id`, `organization`, `contact_no`, `website`) VALUES
+(1, 3, 'My Organization', '09123456789', NULL);
 
 -- --------------------------------------------------------
 
@@ -327,8 +544,17 @@ CREATE TABLE `tournaments` (
   `end_date` datetime DEFAULT NULL,
   `max_teams` int(11) NOT NULL,
   `reg_deadline` datetime NOT NULL,
-  `status` enum('open','completed','cancelled') DEFAULT 'open'
+  `reg_start` datetime NOT NULL,
+  `status` enum('open','completed','cancelled') DEFAULT 'open',
+  `game` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tournaments`
+--
+
+INSERT INTO `tournaments` (`tournament_id`, `organizer_id`, `title`, `description`, `start_date`, `end_date`, `max_teams`, `reg_deadline`, `reg_start`, `status`, `game`) VALUES
+(1, 1, 'AUTUMN CUP 2025', 'A friendly 5v5 online gaming tournament for amateur players.', '2025-12-01 00:00:00', '2025-12-05 23:59:59', 12, '2025-11-25 23:59:59', '2025-11-15 00:00:00', 'open', '');
 
 --
 -- Indexes for dumped tables
@@ -435,7 +661,7 @@ ALTER TABLE `accounts`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=289;
 
 --
 -- AUTO_INCREMENT for table `games`
@@ -453,7 +679,7 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `organizer_profiles`
 --
 ALTER TABLE `organizer_profiles`
-  MODIFY `organizer_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `organizer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `player_profiles`
@@ -489,7 +715,7 @@ ALTER TABLE `team_invitations`
 -- AUTO_INCREMENT for table `tournaments`
 --
 ALTER TABLE `tournaments`
-  MODIFY `tournament_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `tournament_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- Constraints for dumped tables
@@ -555,7 +781,7 @@ ALTER TABLE `team_members`
 --
 ALTER TABLE `tournaments`
   ADD CONSTRAINT `fk_tournament_organizer` FOREIGN KEY (`organizer_id`) REFERENCES `organizer_profiles` (`organizer_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `tournaments_ibfk_1` FOREIGN KEY (`organizer_id`) REFERENCES `accounts` (`account_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_tournament_organizer_new` FOREIGN KEY (`organizer_id`) REFERENCES `organizer_profiles` (`organizer_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

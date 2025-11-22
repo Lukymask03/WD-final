@@ -156,6 +156,7 @@ button:hover {
 
 </head>
 <body>
+<?php include "../includes/admin/admin_header.php"; ?>
 <?php require_once "../includes/admin/sidebar.php"; ?>
 
 

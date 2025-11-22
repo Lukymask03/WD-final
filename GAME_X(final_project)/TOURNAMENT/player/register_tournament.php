@@ -2,7 +2,7 @@
 session_start();
 require_once "../backend/db.php";
 
-// ===== ACCESS CONTROL =====
+// ========== ACCESS CONTROL ==========
 if (!isset($_SESSION["account_id"])) {
     header("Location: ../auth/login.php");
     exit;
@@ -19,7 +19,7 @@ if ($role !== "player") {
 $message = "";
 $message_type = "";
 
-// ===== FETCH PLAYER TEAMS (created or joined) =====
+// ========== FETCH PLAYER TEAMS ==========
 $stmt = $conn->prepare("
     SELECT DISTINCT t.team_id, t.team_name
     FROM teams t
@@ -32,28 +32,39 @@ $stmt->execute([
 ]);
 $teams = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// ===== FETCH OPEN TOURNAMENTS =====
+// ========== FETCH OPEN TOURNAMENTS (FULL FIELDS) ==========
 $stmt2 = $conn->prepare("
-    SELECT tournament_id, title, reg_deadline 
-    FROM tournaments 
-    WHERE status = 'open' 
-      AND reg_deadline >= NOW()
-    ORDER BY reg_deadline ASC
+    SELECT 
+        tournament_id,
+        title,
+        description,
+        start_date,
+        end_date,
+        reg_start_date,
+        reg_end_date,
+        status
+    FROM tournaments
+    WHERE status = 'open'
+      AND reg_end_date >= NOW()
+    ORDER BY reg_start_date ASC
 ");
 $stmt2->execute();
 $tournaments = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
-// ===== HANDLE REGISTRATION =====
+// ========== HANDLE REGISTRATION ==========
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
     $team_id = $_POST["team_id"] ?? null;
     $tournament_id = $_POST["tournament_id"] ?? null;
 
     if ($team_id && $tournament_id) {
+
         // Check if already registered
         $check = $conn->prepare("
-            SELECT 1 FROM registrations 
+            SELECT 1 
+            FROM registrations
             WHERE tournament_id = :tid 
-              AND team_id = :team 
+              AND team_id = :team
               AND account_id = :acc
         ");
         $check->execute([
@@ -65,66 +76,58 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($check->rowCount() > 0) {
             $message = "This team is already registered for that tournament.";
             $message_type = "error";
+
         } else {
             try {
                 $insert = $conn->prepare("
                     INSERT INTO registrations (tournament_id, team_id, account_id, registered_at)
-                    VALUES (:tid, :team, :acc, :reg_time)
+                    VALUES (:tid, :team, :acc, NOW())
                 ");
                 $insert->execute([
                     'tid' => $tournament_id,
                     'team' => $team_id,
-                    'acc' => $account_id,
-                    'reg_time' => date("Y-m-d H:i:s")
+                    'acc' => $account_id
                 ]);
 
                 $message = "Team successfully registered for the tournament!";
                 $message_type = "success";
+
             } catch (PDOException $e) {
                 $message = "Registration failed: " . htmlspecialchars($e->getMessage());
                 $message_type = "error";
             }
         }
+
     } else {
         $message = "Please select both a team and a tournament.";
         $message_type = "error";
     }
-}
 
-// Fetch the updated tournament data
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // ... existing code ...
-
-    // Display the updated tournament data
-    if (isset($_POST["tournament_id"])) {
-        $tournament_id = $_POST["tournament_id"];
-        $stmt = $conn->prepare("
-            SELECT *
+    // Fetch full tournament details after submit
+    if ($tournament_id) {
+        $stmt3 = $conn->prepare("
+            SELECT 
+                title, description, start_date, end_date,
+                reg_start_date, reg_end_date, status
             FROM tournaments
             WHERE tournament_id = :tid
         ");
-        $stmt->execute([
-            'tid' => $tournament_id
-        ]);
-        $tournament = $stmt->fetch(PDO::FETCH_ASSOC);
-    }
+        $stmt3->execute(['tid' => $tournament_id]);
+        $tournament = $stmt3->fetch(PDO::FETCH_ASSOC);
 
-    if ($tournament) {
-        ?>
-        <div class="tournament-card">
-            <h3><?php echo htmlspecialchars($tournament['title']); ?></h3>
-            <p><?php echo htmlspecialchars($tournament['description']); ?></p>
-            <p>Starts: <?php echo date('F d, Y', strtotime($tournament['start_date'])); ?></p>
-            <p>Ends: <?php echo date('F d, Y', strtotime($tournament['end_date'])); ?></p>
-            <p>Registration Starts: <?php echo date('F d, Y', strtotime($tournament['reg_start_date'])); ?></p>
-            <p>Registration Ends: <?php echo date('F d, Y', strtotime($tournament['reg_end_date'])); ?></p>
-            <p>Status: <?php echo htmlspecialchars($tournament['status']); ?></p>
-            <!-- Add more fields as needed -->
-        </div>
-        <?php
+        // SAFE fallback formatting
+        $reg_start = $tournament["reg_start_date"] 
+                        ? date('F d, Y', strtotime($tournament['reg_start_date'])) 
+                        : "Not set";
+
+        $reg_end   = $tournament["reg_end_date"] 
+                        ? date('F d, Y', strtotime($tournament['reg_end_date'])) 
+                        : "Not set";
     }
 }
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -137,8 +140,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <body>
 
 <!-- ===== NAVBAR ===== -->
-<?php require_once "../includes/player/player_navbar.php"; ?>
+<?php require_once "../includes/player/player_sidebar.php"; ?>
+<?php require_once "../includes/player/player_nav.php"; ?>
 
+
+<div class="layout">
+<div class="player-content">
 <!-- ===== MAIN CONTAINER ===== -->
 <div class="container">
     <h2>Register Your Team for a Tournament</h2>
@@ -178,6 +185,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <footer class="footer">
   <p>&copy; <?= date("Y"); ?> Game X Community. All rights reserved.</p>
 </footer>
+</div>
+ </div>
 
 <!-- ===== SCRIPTS ===== -->
   <script src="../assets/js/darkmode_toggle.js"></script>

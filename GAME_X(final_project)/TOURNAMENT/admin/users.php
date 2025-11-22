@@ -94,8 +94,9 @@ include('../includes/admin/sidebar.php');
     </style>
 </head>
 <body>
-
-<?php include __DIR__ . '/../includes/admin/sidebar.php'; ?>
+    
+<?php include  __DIR__ . "/../includes/admin/admin_header.php"; ?>
+<?php include __DIR__ .  "/../includes/admin/sidebar.php"; ?>
 
     <main class="main-content">
         <div class="page-header"><i class="fas fa-users"></i> User Management</div>

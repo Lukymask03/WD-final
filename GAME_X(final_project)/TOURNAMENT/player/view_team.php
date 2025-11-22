@@ -76,7 +76,9 @@ foreach ($members as $member) {
 
 <body>
 
-    <?php require_once "../includes/player/player_navbar.php"; ?>
+<!-- ========== NAVBAR ========== -->
+<?php require_once "../includes/player/player_sidebar.php"; ?>
+<?php require_once "../includes/player/player_nav.php"; ?>
 
     <main class="team-view-container">
         <!-- Full Width Hero Banner -->

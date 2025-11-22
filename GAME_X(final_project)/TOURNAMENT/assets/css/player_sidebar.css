@@ -1,0 +1,71 @@
+.player-sidebar {
+    width: 260px;
+    height: 100vh;
+    background: #1a1a1a;
+    color: #fff;
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.sidebar-logo {
+    width: 70px;
+    height: auto;
+}
+
+.sidebar-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.sidebar-item {
+    padding: 12px 15px;
+    background: #2a2a2a;
+    border-radius: 8px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 15px;
+    transition: 0.2s;
+}
+
+.sidebar-item:hover {
+    background: #ff4500;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.darkmode-btn, .logout-btn {
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.darkmode-btn {
+    background: #333;
+    color: white;
+}
+
+.logout-btn {
+    background: #ff2d2d;
+    color: white;
+    text-decoration: none;
+    display: block;
+}

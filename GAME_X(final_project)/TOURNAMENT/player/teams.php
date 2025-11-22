@@ -156,8 +156,11 @@ $player_game_teams = $player_teams_stmt->fetchAll(PDO::FETCH_COLUMN);
 
 <body>
 
-    <?php require_once "../includes/player/player_navbar.php"; ?>
+    <?php require_once "../includes/player/player_sidebar.php"; ?>
+    <?php require_once "../includes/player/player_nav.php"; ?>
 
+<div class="layout">
+    <div class="player-content">
     <main class="teams-container">
         <div class="teams-header">
             <div class="header-left">
@@ -286,6 +289,7 @@ $player_game_teams = $player_teams_stmt->fetchAll(PDO::FETCH_COLUMN);
                     </div>
                 <?php endif; ?>
             </div>
+    </div>
     </main>
 
     <!-- Create Team Modal -->
@@ -294,6 +298,7 @@ $player_game_teams = $player_teams_stmt->fetchAll(PDO::FETCH_COLUMN);
     <footer class="footer">
         <p>&copy; <?= date("Y") ?> Game X Community. All rights reserved.</p>
     </footer>
+ </div> 
 
     <script src="../assets/js/darkmode_toggle.js"></script>
     <script src="../assets/js/index.js"></script>

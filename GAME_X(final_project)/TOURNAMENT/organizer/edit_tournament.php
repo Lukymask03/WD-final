@@ -1,45 +1,73 @@
 <?php
 session_start();
 require_once "../backend/db.php";
-require_once "../auth/auth_guard.php";
+require_once "../backend/helpers/auth_guard.php";
+require_once "../backend/helpers/log_activity.php";
 
-// ✅ Organizer access only
-checkAuth("organizer");
+checkAuth('organizer');
 
-$organizer_id = $_SESSION['user_id'];
+// ✅ Use the correct session variable for organizer
+$organizer_id = $_SESSION['account_id'] ?? $_SESSION['user_id'] ?? null;
 
-// ✅ Ensure 'id' is passed
+if (!$organizer_id) {
+    die("Organizer not logged in.");
+}
+
 if (!isset($_GET['id'])) {
     header("Location: view_tournaments.php");
     exit;
 }
 
-$tournament_id = $_GET['id'];
+$tournament_id = (int)$_GET['id'];
 
-//  Fetch tournament belonging to this organizer
-$stmt = $conn->prepare("SELECT * FROM tournaments WHERE tournament_id = ? AND organizer_id = ?");
-$stmt->execute([$tournament_id, $organizer_id]);
+// ===== Fetch tournament WITHOUT restricting to organizer =====
+$stmt = $conn->prepare("SELECT * FROM tournaments WHERE tournament_id = ?");
+$stmt->execute([$tournament_id]);
 $tournament = $stmt->fetch(PDO::FETCH_ASSOC);
 
-//  If tournament not found
+// ===== Friendly message if tournament not found =====
 if (!$tournament) {
-    die("Tournament not found or access denied.");
+    echo "<div class='container'>";
+    echo "<h2>Tournament Not Found</h2>";
+    echo "<p>The tournament you are trying to edit does not exist.</p>";
+    echo "<a href='view_tournaments.php' class='btn'>Back to My Tournaments</a>";
+    echo "</div>";
+    exit;
 }
 
-//  Handle form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['tournament_name']);
-    $game = trim($_POST['game_name']);
-    $start = $_POST['start_date'];
-    $end = $_POST['end_date'];
+// ===== Check if organizer owns this tournament =====
+$ownTournament = ($tournament['organizer_id'] == $organizer_id);
+$accessWarning = !$ownTournament
+    ? "<p style='color:red; font-weight:bold;'>You are not the organizer of this tournament. Changes may not be saved under your account.</p>"
+    : "";
+
+// ===== Handle form submission only if organizer owns the tournament =====
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $ownTournament) {
+    $title = trim($_POST['title']);
+    $game = trim($_POST['game']);
+    $description = trim($_POST['description']);
+    $start_date = $_POST['start_date'];
+    $end_date = $_POST['end_date'];
+    $max_teams = (int)$_POST['max_teams'];
+    $reg_start = $_POST['reg_start_date'];
+    $reg_deadline = $_POST['reg_deadline'];
     $status = $_POST['status'];
 
-    $stmt = $conn->prepare("UPDATE tournaments 
-        SET tournament_name=?, game_name=?, start_date=?, end_date=?, status=? 
-        WHERE tournament_id=? AND organizer_id=?");
-    $stmt->execute([$name, $game, $start, $end, $status, $tournament_id, $organizer_id]);
+    $stmt = $conn->prepare("
+        UPDATE tournaments SET
+            title=?, game=?, description=?, start_date=?, end_date=?,
+            max_teams=?, reg_start=?, reg_deadline=?, status=?
+        WHERE tournament_id=? AND organizer_id=?
+    ");
+    $stmt->execute([
+        $title, $game, $description, $start_date, $end_date,
+        $max_teams, $reg_start, $reg_deadline, $status,
+        $tournament_id, $organizer_id
+    ]);
 
-    header("Location: view_tournaments.php?updated=1");
+    logActivity($organizer_id, "Edit Tournament", "Updated tournament ID: $tournament_id");
+
+    header("Location: view_tournaments.php");
     exit;
 }
 ?>
@@ -47,105 +75,89 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edit Tournament</title>
-  <link rel="stylesheet" href="../assets/css/common.css">
-  <link rel="stylesheet" href="../assets/css/organizer_dashboard.css">
-  <script src="../assets/js/darkmode.js" defer></script>
+<meta charset="UTF-8">
+<title>Edit Tournament | GameX</title>
+<link rel="stylesheet" href="../assets/css/common.css">
+<link rel="stylesheet" href="../assets/css/organizer_dashboard.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<style>
+body { font-family: 'Poppins', sans-serif; }
+form {
+    max-width: 600px; margin: 60px auto; background: var(--bg-secondary);
+    padding: 25px; border-radius: 15px; box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+h2 { text-align: center; color: var(--text-main); }
+label { display: block; margin-top: 15px; font-weight: 600; }
+input, select, textarea { width: 100%; padding: 10px; margin-top: 5px;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: var(--bg-main); color: var(--text-main); }
+button { display: block; width: 100%; margin-top: 25px; padding: 10px;
+    background: #3498db; border: none; border-radius: 8px; color: white;
+    font-weight: 600; cursor: pointer; transition: 0.3s; }
+button:hover { background: #2980b9; }
+.access-warning {
+    background-color: #ffe6e6;
+    color: #c0392b;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;
+}
 
-  <style>
-      body {
-          font-family: 'Poppins', sans-serif;
-      }
-      form {
-          max-width: 600px;
-          margin: 60px auto;
-          background: var(--bg-secondary);
-          padding: 25px;
-          border-radius: 15px;
-          box-shadow: 0 0 15px rgba(0,0,0,0.2);
-      }
-      h2 {
-          text-align: center;
-          color: var(--text-main);
-      }
-      label {
-          display: block;
-          margin-top: 15px;
-          font-weight: 600;
-      }
-      input, select {
-          width: 100%;
-          padding: 10px;
-          margin-top: 5px;
-          border: 1px solid var(--border);
-          border-radius: 8px;
-          background: var(--bg-main);
-          color: var(--text-main);
-      }
-      button {
-          display: block;
-          width: 100%;
-          margin-top: 25px;
-          padding: 10px;
-          background: #3498db;
-          border: none;
-          border-radius: 8px;
-          color: white;
-          font-weight: 600;
-          cursor: pointer;
-          transition: 0.3s;
-      }
-      button:hover {
-          background: #2980b9;
-      }
-  </style>
+</style>
 </head>
 <body>
-  <!-- ==== NAVIGATION BAR ==== -->
-  <header class="navbar">
-    <div class="logo-link">
-      <img src="../assets/images/game_x_logo.png" alt="GameX Logo" class="logo-img" style="height: 40px; vertical-align: middle;">
-      <h2>GameX Organizer</h2>
-    </div>
+<!-- ==== SIDEBAR ==== -->
+<?php include '../includes/organizer/organizer_sidebar.php'; ?>
+<form method="POST">
 
-<nav>
-    <a href="organizer_dashboard.php">Dashboard</a>
-    <a href="create_tournament.php">Create Tournament</a>
-    <a href="view_tournaments.php">Manage Tournaments</a> <!-- correct link -->
-    <a href="select_tournament.php">Manage Brackets</a> <!-- separate, safe -->
-</nav>
+   <h2>Edit Tournament</h2>
 
-          <div class="nav-actions">
-           <a href="../auth/logout.php" class="btn">Logout</a>
+    <!-- Access warning inside the card -->
+    <?php if (!$ownTournament): ?>
+        <div class="access-warning">
+            You are not the organizer of this tournament. Changes may not be saved under your account.
         </div>
-  </header>
+    <?php endif; ?>
 
-  <!--  Main Content -->
-  <form method="POST">
-      <h2>Edit Tournament</h2>
+    <label>Title</label>
+    <input type="text" name="title" value="<?= htmlspecialchars($tournament['title']) ?>" required>
 
-      <label for="tournament_name">Tournament Name</label>
-      <input type="text" name="tournament_name" value="<?= htmlspecialchars($tournament['tournament_name']) ?>" required>
+    <label>Game</label>
+    <input type="text" name="game" value="<?= htmlspecialchars($tournament['game']) ?>" required>
 
-      <label for="game_name">Game Name</label>
-      <input type="text" name="game_name" value="<?= htmlspecialchars($tournament['game_name']) ?>" required>
+    <label>Description</label>
+    <textarea name="description"><?= htmlspecialchars($tournament['description']) ?></textarea>
 
-      <label for="start_date">Start Date</label>
-      <input type="date" name="start_date" value="<?= htmlspecialchars($tournament['start_date']) ?>" required>
+    <label>Start Date</label>
+    <input type="date" name="start_date" value="<?= date('Y-m-d', strtotime($tournament['start_date'])) ?>" required>
 
-      <label for="end_date">End Date</label>
-      <input type="date" name="end_date" value="<?= htmlspecialchars($tournament['end_date']) ?>" required>
+    <label>End Date</label>
+    <input type="date" name="end_date" value="<?= date('Y-m-d', strtotime($tournament['end_date'])) ?>">
 
-      <label for="status">Status</label>
-      <select name="status">
-          <option value="Upcoming" <?= $tournament['status'] === 'Upcoming' ? 'selected' : '' ?>>Upcoming</option>
-          <option value="Ongoing" <?= $tournament['status'] === 'Ongoing' ? 'selected' : '' ?>>Ongoing</option>
-          <option value="Completed" <?= $tournament['status'] === 'Completed' ? 'selected' : '' ?>>Completed</option>
-      </select>
+    <label>Max Teams</label>
+    <input type="number" name="max_teams" min="2" value="<?= $tournament['max_teams'] ?>">
 
-      <button type="submit">Update Tournament</button>
-  </form>
+    <label>Registration Start</label>
+    <input type="date" name="reg_start_date" value="<?= date('Y-m-d', strtotime($tournament['reg_start'])) ?>">
+
+    <label>Registration Deadline</label>
+    <input type="date" name="reg_deadline" value="<?= date('Y-m-d', strtotime($tournament['reg_deadline'])) ?>">
+
+    <label>Status</label>
+    <select name="status">
+        <option value="open" <?= $tournament['status']=='open'?'selected':'' ?>>Open</option>
+        <option value="closed" <?= $tournament['status']=='closed'?'selected':'' ?>>Closed</option>
+    </select>
+
+    <?php if ($ownTournament): ?>
+        <button type="submit">Update Tournament</button>
+    <?php else: ?>
+        <button type="button" disabled>Cannot Edit</button>
+    <?php endif; ?>
+</form>
+
+</main>
 </body>
 </html>

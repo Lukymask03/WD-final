@@ -66,41 +66,47 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       <p class="error"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
 
-    <form method="POST" action="">
-      <input type="email" name="email" placeholder="Email" required>
+<form method="POST" action="">
+    <input type="email" name="email" placeholder="Email" required>
 
-      <div class="password-field">
-        <input type="password" name="password" id="password" placeholder="Password" required>
-        <span class="toggle-password" id="togglePassword">
-          <i class="fa-solid fa-eye"></i>
-        </span>
-      </div>
+   <div class="password-field">
+  <input type="password" name="password" id="password" placeholder="Password" required>
+  <span class="toggle-password" id="togglePassword">
+     <i class="fa-solid fa-eye"></i>
+  </span>
+  <br>
+</div>
 
-      <button type="submit">Login</button>
-    </form>
 
-    <button onclick="window.location.href='create_account.php'">
+    <button type="submit" class="login-btn">Login</button>
+
+    <button type="button" class="create-account-btn" onclick="window.location.href='create_account.php'">
       Create Account
     </button>
-  </div>
+</form>
 
-  <!-- SweetAlert2 JS -->
-  <script src="../assets/js/sweetalert2.all.min.js"></script>
   <script>
-    const togglePassword = document.getElementById("togglePassword");
-    const passwordInput = document.getElementById("password");
+document.addEventListener("DOMContentLoaded", () => {
+  const togglePassword = document.getElementById("togglePassword");
+  const passwordInput = document.getElementById("password");
 
-    togglePassword.addEventListener("click", function() {
-      const icon = this.querySelector("i");
-      const isPassword = passwordInput.type === "password";
-      passwordInput.type = isPassword ? "text" : "password";
+  if (togglePassword && passwordInput) {
+    togglePassword.addEventListener("click", () => {
+      const type = passwordInput.type === "password" ? "text" : "password";
+      passwordInput.type = type;
+
+      const icon = togglePassword.querySelector("i");
       icon.classList.toggle("fa-eye");
       icon.classList.toggle("fa-eye-slash");
     });
-  </script>
+  }
+});
+</script>
 
   <script src="../assets/js/index.js"></script>
   <script src="../assets/js/darkmode_toggle.js"></script>
+
+
 </body>
 
 </html>

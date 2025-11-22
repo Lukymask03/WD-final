@@ -153,7 +153,8 @@ table th:nth-child(7), td:nth-child(7) { width: 5%; }
 
 </head>
 <body>
-<?php require_once "../includes/admin/sidebar.php"; ?>
+<?php include "../includes/admin/admin_header.php"; ?>
+<?php include "../includes/admin/sidebar.php"; ?>
 
 <div class="main-content">
     <h2>Organizer Reports</h2>

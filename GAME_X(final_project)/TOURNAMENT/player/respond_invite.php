@@ -95,7 +95,12 @@ $invitations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
 
-<?php require_once "../includes/player/player_navbar.php"; ?>
+<?php require_once "../includes/player/player_sidebar.php"; ?>
+<?php require_once "../includes/player/player_nav.php"; ?>
+
+
+<div class="layout">
+<div class="player-content">
 
 <div class="container">
     <h2>Pending Team Invitations</h2>
@@ -141,6 +146,8 @@ $invitations = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <footer class="footer">
   <p>&copy; <?= date("Y"); ?> Game X Community. All rights reserved.</p>
 </footer>
+</div>
+    </div>
 <script src="../assets/js/darkmode_toggle.js"></script>
 <script src="../assets/js/index.js"></script>
 </body>

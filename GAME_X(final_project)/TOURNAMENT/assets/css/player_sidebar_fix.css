@@ -1,0 +1,61 @@
+/* COLLAPSE SIDEBAR STYLE */
+.sidebar {
+    width: 260px;
+    transition: 0.25s ease;
+}
+
+.sidebar.collapsed {
+    width: 80px;
+}
+
+.sidebar.collapsed .sidebar-title,
+.sidebar.collapsed .menu-section-title,
+.sidebar.collapsed .label {
+    display: none;
+}
+
+.sidebar-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+/* SHIFT MAIN CONTENT WHEN SIDEBAR COLLAPSES */
+body.sidebar-collapsed .main-content,
+body.sidebar-collapsed main,
+body.sidebar-collapsed .container,
+body.sidebar-collapsed .teams-container,
+body.sidebar-collapsed .dashboard-container {
+    margin-left: 80px !important;
+}
+
+main, .main-content, .container, .dashboard-container, .teams-container {
+    margin-left: 260px;
+    transition: margin-left 0.25s ease;
+}
+
+/* Make logout text orange */
+.top-nav .logout-link {
+    color: #ff6600 !important;
+    font-weight: 600;
+}
+
+/* Make logout hover effect darker */
+.top-nav .logout-link:hover {
+    color: #cc5200 !important;
+}
+
+/* Make hamburger/menu icon orange */
+.top-nav .menu-toggle i {
+    color: #ff6600 !important;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+/* Hover effect for hamburger */
+.top-nav .menu-toggle i:hover {
+    color: #cc5200 !important;
+}

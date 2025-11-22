@@ -1,4 +1,4 @@
-<?php
+<?php 
 // ========================================
 // ADMIN TOURNAMENT MANAGEMENT
 // ========================================
@@ -28,21 +28,23 @@ $offset = ($page - 1) * $pageSize;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
 try {
-    // Count total tournaments
+
+    // ✅ FIXED: Count total tournaments
     if (!empty($search)) {
-        $countStmt = $conn->prepare("SELECT COUNT(*) FROM tournaments WHERE name LIKE :search");
+        $countStmt = $conn->prepare("SELECT COUNT(*) FROM tournaments WHERE title LIKE :search");
         $countStmt->execute(['search' => "%$search%"]);
     } else {
         $countStmt = $conn->query("SELECT COUNT(*) FROM tournaments");
     }
+
     $totalTournaments = $countStmt->fetchColumn();
     $totalPages = max(1, ceil($totalTournaments / $pageSize));
 
-    // Fetch tournaments with pagination
+    // ✅ FIXED: Fetch tournaments using title, NOT name
     if (!empty($search)) {
         $stmt = $conn->prepare("
             SELECT * FROM tournaments 
-            WHERE name LIKE :search
+            WHERE title LIKE :search
             ORDER BY start_date DESC
             LIMIT :limit OFFSET :offset
         ");
@@ -54,6 +56,7 @@ try {
             LIMIT :limit OFFSET :offset
         ");
     }
+
     $stmt->bindValue(':limit', (int)$pageSize, PDO::PARAM_INT);
     $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
     $stmt->execute();
@@ -104,7 +107,10 @@ try {
 <body>
 
 <!-- ✅ Sidebar -->
-<?php include $sidebarPath; ?>
+
+<?php include "../includes/admin/admin_header.php"; ?>
+<?php include "../includes/admin/sidebar.php"; ?>
+
 
 <!-- Main Content -->
 <main class="content">
@@ -121,7 +127,7 @@ try {
     <table class="table">
         <thead>
             <tr>
-                <th>Name</th>
+                <th>Title</th>
                 <th>Game</th>
                 <th>Start Date</th>
                 <th>End Date</th>
@@ -133,8 +139,8 @@ try {
             <?php if ($tournaments): ?>
                 <?php foreach ($tournaments as $tournament): ?>
                     <tr>
-                        <td><?= htmlspecialchars($tournament['name']) ?></td>
-                        <td><?= htmlspecialchars($tournament['game_name'] ?? 'N/A') ?></td>
+                        <td><?= htmlspecialchars($tournament['title']) ?></td>
+                        <td><?= htmlspecialchars($tournament['game']) ?></td>
                         <td><?= htmlspecialchars($tournament['start_date']) ?></td>
                         <td><?= htmlspecialchars($tournament['end_date']) ?></td>
                         <td><span class="status <?= strtolower($tournament['status']) ?>"><?= htmlspecialchars($tournament['status']) ?></span></td>

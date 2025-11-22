@@ -1,7 +1,8 @@
-<?php
+<?php 
 session_start();
 require_once __DIR__ . "/../backend/db.php";
 require_once __DIR__ . "/../backend/helpers/log_activity.php";
+require __DIR__ . '/../backend/notifications/notification_engine.php';
 
 if (isset($_POST["register"])) {
     $username = trim($_POST["username"]);
@@ -31,7 +32,7 @@ if (isset($_POST["register"])) {
             exit;
         }
 
-        // Insert into accounts table
+        // Insert account
         $stmt = $conn->prepare("
             INSERT INTO accounts (username, email, password, role, fullname, team, age, account_status)
             VALUES (:username, :email, :password, :role, :fullname, :team, :age, 'active')
@@ -48,13 +49,21 @@ if (isset($_POST["register"])) {
 
         $account_id = $conn->lastInsertId();
 
-        // Log the activity
+        // 🔥 Log activity
         logActivity($account_id, "Registered new account", "Role: $role");
+
+        // 🔥 SEND WELCOME EMAIL (correct)
+        triggerNotification('new_account', [
+            'email'    => $email,
+            'username' => $username
+        ]);
 
         $_SESSION["success_message"] = "Account created successfully!";
         $_SESSION["success_username"] = $username;
+
         header("Location: create_account.php");
         exit;
+
     } catch (PDOException $e) {
         $_SESSION["error_message"] = "Database error: " . $e->getMessage();
         header("Location: create_account.php");
@@ -62,6 +71,7 @@ if (isset($_POST["register"])) {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

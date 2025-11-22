@@ -34,6 +34,8 @@ $username = $_SESSION['username'] ?? 'Organizer';
   <title>Organizer Dashboard | GameX</title>
   <link rel="stylesheet" href="../assets/css/common.css" />
   <link rel="stylesheet" href="../assets/css/organizer_dashboard.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
   <style>
     /* --- INLINE DASHBOARD STYLING (can be moved to CSS) --- */
     body {
@@ -135,19 +137,9 @@ $username = $_SESSION['username'] ?? 'Organizer';
 </head>
 
 <body>
-  <!-- ==== NAVIGATION BAR ==== -->
+<!-- ==== NAVIGATION BAR ==== -->
   <header class="navbar">
-    <div class="logo-link">
-      <img src="../assets/images/game_x_logo.png" alt="GameX Logo" class="logo-img" style="height: 40px; vertical-align: middle;">
-      <h2>GameX Organizer</h2>
-    </div>
-
-<nav>
-    <a href="organizer_dashboard.php">Dashboard</a>
-    <a href="create_tournament.php">Create Tournament</a>
-    <a href="view_tournaments.php">Manage Tournaments</a> <!-- correct link -->
-    <a href="select_tournament.php">Manage Brackets</a> <!-- separate, safe -->
-</nav>
+  <?php include '../includes/organizer/organizer_sidebar.php'; ?>
 
           <div class="nav-actions">
            <a href="../auth/logout.php" class="btn">Logout</a>

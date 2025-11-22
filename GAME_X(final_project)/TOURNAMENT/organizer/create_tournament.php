@@ -1,175 +1,364 @@
-<?php
+<?php 
 session_start();
-require_once "../backend/db.php";
-require_once "../backend/helpers/auth_guard.php";
-require_once "../backend/helpers/log_activity.php";
+require_once __DIR__ . '/../backend/db.php';
 
-// Allow only organizers
-checkAuth("organizer");
+// Only allow organizers
+if (!isset($_SESSION['account_id']) || $_SESSION['role'] !== 'organizer') {
+    die("Unauthorized access.");
+}
 
-$success = false;
+// ===== Lookup organizer_id from organizer_profiles =====
+$stmtProfile = $conn->prepare("SELECT organizer_id FROM organizer_profiles WHERE account_id = ?");
+$stmtProfile->execute([$_SESSION['account_id']]);
+$profile = $stmtProfile->fetch(PDO::FETCH_ASSOC);
+
+if (!$profile) {
+    die("Organizer profile not found. Please complete your profile first.");
+}
+
+$organizer_id = $profile['organizer_id']; // ✅ Correct organizer_id to use in tournaments table
+
+$success = "";
 $error = "";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $tournament_name = trim($_POST["tournament_name"]);
-    $game_title = trim($_POST["game_title"]);
-    $max_players = trim($_POST["max_players"]);
-    $start_date = trim($_POST["start_date"]);
-    $end_date = trim($_POST["end_date"]);
-    $reg_start_date = trim($_POST["reg_start_date"]);
-    $reg_end_date = trim($_POST["reg_end_date"]);
-    $num_teams = trim($_POST["num_teams"]);
-    $description = trim($_POST["description"]);
-    $organizer_id = $_SESSION["user_id"];
+// Handle form submission
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    // Validate required fields
-    if (empty($tournament_name) || empty($game_title) || empty($max_players) || empty($start_date) || empty($reg_start_date) || empty($reg_end_date) || empty($num_teams)) {
-        $error = "Please fill in all required fields.";
-    } else {
-        // Validate start and end date of registration
-        if ($reg_start_date >= $reg_end_date) {
-            $error = "End date of registration cannot be earlier than start date of registration.";
-        } elseif ($reg_start_date < $start_date) {
-            $error = "Start date of registration cannot be earlier than start date of tournament.";
-        } elseif ($reg_end_date > $end_date) {
-            $error = "End date of registration cannot be later than end date of tournament.";
-        } else {
-            try {
-                $stmt = $conn->prepare("
-                    INSERT INTO tournaments (tournament_name, game_title, max_players, start_date, end_date, reg_start_date, reg_end_date, num_teams, description, organizer_id, status)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'open')
-                ");
-                $stmt->execute([$tournament_name, $game_title, $max_players, $start_date, $end_date, $reg_start_date, $reg_end_date, $num_teams, $description, $organizer_id]);
+    $title = trim($_POST['title'] ?? '');
+    $description = trim($_POST['description'] ?? '');
+    $start_date = trim($_POST['start_date'] ?? '');
+    $end_date = trim($_POST['end_date'] ?? '');
+    $max_teams = intval($_POST['max_teams'] ?? 0);
+    $reg_start_date = trim($_POST['reg_start_date'] ?? '');
+    $reg_deadline = trim($_POST['reg_deadline'] ?? '');
 
-                // Log organizer activity
-                logActivity($organizer_id, "Create Tournament", "Created tournament: $tournament_name");
+    // Convert to timestamps for validation
+    $start_ts = strtotime($start_date);
+    $end_ts = $end_date ? strtotime($end_date) : null;
+    $reg_start_ts = strtotime($reg_start_date);
+    $reg_deadline_ts = strtotime($reg_deadline);
 
-                $success = true;
-            } catch (PDOException $e) {
+    // Validation
+    if (!$title || !$start_date || !$reg_start_date || !$reg_deadline || $max_teams <= 0) {
+        $error = "Please fill in all required fields correctly.";
+    } elseif ($reg_start_ts > $start_ts) {
+        $error = "Registration cannot start after the tournament start date.";
+    } elseif ($reg_deadline_ts <= $reg_start_ts) {
+        $error = "Registration deadline must be after the registration start date.";
+    } elseif ($reg_deadline_ts >= $start_ts) {
+        $error = "Registration deadline must be before the tournament start date.";
+    } elseif ($end_ts && $start_ts > $end_ts) {
+        $error = "Tournament start date cannot be after the end date.";
+    }
+
+    // Insert into DB
+    if (empty($error)) {
+        try {
+            $stmt = $conn->prepare("
+                INSERT INTO tournaments
+                (organizer_id, title, description, start_date, end_date, max_teams, reg_start, reg_deadline, status)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'open')
+            ");
+
+            $stmt->execute([
+                $organizer_id,                // ✅ use correct organizer_id from organizer_profiles
+                $title,
+                $description,
+                $start_date . " 00:00:00",
+                $end_date ? $end_date . " 23:59:59" : null,
+                $max_teams,
+                $reg_start_date . " 00:00:00",
+                $reg_deadline . " 23:59:59"
+            ]);
+
+            $success = "Tournament created successfully!";
+        } catch (PDOException $e) {
+            // Provide more descriptive error if FK fails
+            if (strpos($e->getMessage(), '1452') !== false) {
+                $error = "Database error: Organizer profile not found in organizer_profiles table.";
+            } else {
                 $error = "Database error: " . $e->getMessage();
             }
         }
     }
+}
 
-    // Return JSON response
-    header('Content-Type: application/json');
-    echo json_encode([
-        'success' => $success,
-        'error' => $error
-    ]);
-
-    // Redirect to the tournament page
-    header('Location: tournament.php?id=' . $tournament_id);
-    exit();
+// Optional: Display success/error messages
+if ($success) {
+    echo "<p style='color:green;'>$success</p>";
+}
+if ($error) {
+    echo "<p style='color:red;'>$error</p>";
 }
 ?>
 
+
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Create Tournament - GameX Organizer</title>
-    <link rel="stylesheet" href="../assets/css/common.css">
-    <link rel="stylesheet" href="../assets/css/organizer_dashboard.css">
+    <title>Create Tournament</title>
+  <link rel="stylesheet" href="../assets/css/common.css">
+<link rel="stylesheet" href="../assets/css/organizer_dashboard.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<style>
+/* ======================
+   SIDEBAR OFFSET + TOPBAR
+====================== */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 260px; /* match sidebar width */
+  right: 0;
+  height: 65px;
+  background: #fff;
+  border-bottom: 3px solid #ff6600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  z-index: 1000;
+}
+
+.page-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ff6600;
+  margin: 0;
+}
+
+.logout-btn {
+  background: #ff6600;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: #e55a00;
+}
+
+/* ======================
+   MAIN CONTENT AREA
+====================== */
+main.content-area {
+  margin-left: 280px; /* leave space for sidebar */
+  padding: 100px 60px 40px; /* add top padding for navbar */
+  min-height: 100vh;
+  background: #f4f5f7;
+  display: flex;
+  justify-content: center;
+}
+
+/* ======================
+   FORM CARD
+====================== */
+.form-section {
+  background: #fff;
+  max-width: 900px;
+  width: 100%;
+  padding: 40px 50px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.form-section h2 {
+  text-align: center;
+  color: #ff6600;
+  margin-bottom: 30px;
+  font-weight: 700;
+}
+
+/* ======================
+   MESSAGES
+====================== */
+.message {
+  text-align: center;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+.message.success { color: green; }
+.message.error { color: red; }
+
+/* ======================
+   FORM GRID
+====================== */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 30px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+input, textarea {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+input:focus, textarea:focus {
+  border-color: #ff6600;
+  outline: none;
+  box-shadow: 0 0 5px rgba(255, 102, 0, 0.3);
+}
+
+/* ======================
+   BUTTON
+====================== */
+.btn {
+  width: 100%;
+  padding: 12px;
+  background: #ff6600;
+  border: none;
+  color: white;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 25px;
+  transition: background 0.3s;
+}
+
+.btn:hover {
+  background: #e55a00;
+}
+
+/* ======================
+   RESPONSIVE DESIGN
+====================== */
+@media (max-width: 768px) {
+  .topbar {
+    left: 0;
+    padding: 0 20px;
+  }
+
+  main.content-area {
+    margin-left: 0;
+    padding: 90px 20px 40px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
 </head>
 <body>
-  <!-- ==== NAVIGATION BAR ==== -->
-  <header class="navbar">
-    <div class="logo-link">
-      <img src="../assets/images/game_x_logo.png" alt="GameX Logo" class="logo-img" style="height: 40px; vertical-align: middle;">
-      <h2>GameX Organizer</h2>
-    </div>
+  <!-- ==== SIDEBAR ==== -->
+  <?php include '../includes/organizer/organizer_sidebar.php'; ?>
+  <?php include "../includes/organizer/organizer_header.php"; ?>
 
-<nav>
-    <a href="organizer_dashboard.php">Dashboard</a>
-    <a href="create_tournament.php">Create Tournament</a>
-    <a href="view_tournaments.php">Manage Tournaments</a> <!-- correct link -->
-    <a href="select_tournament.php">Manage Brackets</a> <!-- separate, safe -->
-</nav>
-
-          <div class="nav-actions">
-           <a href="../auth/logout.php" class="btn">Logout</a>
-        </div>
+  <!-- ==== TOP NAVBAR ==== -->
+  <header class="topbar">
+    <h1 class="page-title">Create Tournament</h1>
+    <a href="../auth/logout.php" class="logout-btn">Logout</a>
   </header>
 
+  <!-- ==== MAIN CONTENT ==== -->
+<!-- ==== MAIN CONTENT ==== -->
+<main class="content-area">
+    <section class="form-section">
 
-    <!-- ==== MAIN CONTENT ==== -->
+        <!-- ===== Feedback Messages ===== -->
+        <?php if($success): ?>
+            <div class="message success"><?= htmlspecialchars($success) ?></div>
+        <?php elseif(!empty($error)): ?>
+            <div class="message error"><?= htmlspecialchars($error) ?></div>
+        <?php endif; ?>
 
-    <main class="content-area">
-        <section class="form-section">
-            <h2>Create New Tournament</h2>
+        <!-- ===== Tournament Form ===== -->
+        <form action="" method="POST" id="tournamentForm" class="form-container">
 
-            <?php if ($success): ?>
-                <div class="success-msg"><?= htmlspecialchars($success) ?></div>
-            <?php elseif ($error): ?>
-                <div class="error-msg"><?= htmlspecialchars($error) ?></div>
-            <?php endif; ?>
+            <label>Tournament Title</label>
+            <input type="text" name="title" required value="">
 
-           <form method="POST" class="tournament-form">
-            <label for="tournament_name">Tournament Name *</label>
-            <input type="text" name="tournament_name" id="tournament_name" required>
- 
-            <label for="game_title">Game Title *</label>
-            <input type="text" name="game_title" id="game_title" required>
+            <label>Description</label>
+            <textarea name="description" rows="3"></textarea>
 
-            <label for="max_players">Maximum Players *</label>
-            <input type="number" name="max_players" id="max_players" required min="2">
+            <label>Tournament Start Date</label>
+            <input type="date" name="start_date" required value="">
 
-            <label for="start_date">Start Date *</label>
-            <input type="date" name="start_date" id="start_date" required>
+            <label>Tournament End Date</label>
+            <input type="date" name="end_date" value="">
 
-            <label for="reg_start_date">Start Date of Registration *</label>
-            <input type="date" name="reg_start_date" id="reg_start_date" required>
+            <label>Max Teams</label>
+            <input type="number" name="max_teams" min="2" required value="">
+            
+            <label>Registration Start Date</label>
+            <input type="date" name="reg_start_date" required value="">
 
-            <label for="reg_end_date">End Date of Registration *</label>
-            <input type="date" name="reg_end_date" id="reg_end_date" required>
+            <label>Registration Deadline</label>
+            <input type="date" name="reg_deadline" required value="">
 
-            <label for="num_teams">Number of Teams to Register *</label>
-            <input type="number" name="num_teams" id="num_teams" required min="1">
+            <button type="submit" class="btn">Create Tournament</button>
+        </form>
 
-            <label for="description">Description</label>
-            <textarea name="description" id="description" rows="4" placeholder="Optional tournament details..."></textarea>
+    </section>
+</main>
 
-           <button type="submit" class="btn">Create Tournament</button>
-          </form>
-        </section>
-    </main>
-    <!-- ==== FOOTER ==== -->
-    <footer class="footer">
-        <p>© <?= date("Y") ?> GameX Tournament System. All rights reserved.</p>
-    </footer>
-    <!-- ==== SCRIPTS ==== -->
-    <script>
-        const form = document.querySelector('.tournament-form');
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
+<script>
+const form = document.getElementById('tournamentForm');
+const formMessage = document.getElementById('formMessage');
 
-            // Get form data
-            const formData = new FormData(form);
+form.addEventListener('submit', function(e){
+    e.preventDefault();
+    const formData = new FormData(form);
+    formMessage.textContent = "Processing...";
+    formMessage.style.color = "orange";
 
-            // Send form data to the server
-            fetch('/create-tournament', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Handle the response from the server
-                if (data.success) {
-                    // Display success message
-                    const successMessage = document.querySelector('.success-message');
-                    successMessage.textContent = data.message;
-                } else {
-                    // Display error message
-                    const errorMessage = document.querySelector('.error-message');
-                    errorMessage.textContent = data.message;
-                }
-            })
-            .catch(error => {
-                // Handle any errors
-                console.error(error);
-            });
-        });
-    </script>
+    fetch(window.location.href, {
+        method: "POST",
+        body: formData,
+        credentials: "same-origin",
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+            formMessage.textContent = data.message;
+            formMessage.style.color = "green";
+            form.reset();
+            setTimeout(()=>{ window.location.href = data.redirect_url; }, 1500);
+        } else {
+            formMessage.textContent = data.message;
+            formMessage.style.color = "red";
+        }
+    })
+    .catch(err=>{
+        formMessage.textContent = "Unexpected error: "+err.message;
+        formMessage.style.color="red";
+    });
+});
+</script>
+<script>
+    // Wait until the page loads
+    window.addEventListener('DOMContentLoaded', (event) => {
+        // Clear the form fields
+        document.getElementById('tournamentForm').reset();
+        alert("<?= $success ?>"); // Optional: show success message
+    });
+</script>
 </body>
 </html>
