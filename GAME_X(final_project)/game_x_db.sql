@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 17, 2025 at 03:24 AM
+-- Generation Time: Dec 13, 2025 at 04:25 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -38,18 +38,36 @@ CREATE TABLE `accounts` (
   `age` int(11) DEFAULT NULL,
   `is_admin` tinyint(1) NOT NULL DEFAULT 0,
   `account_status` enum('active','suspended','pending') DEFAULT 'active',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `notify_updates` tinyint(1) NOT NULL DEFAULT 1,
+  `notify_tournaments` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `accounts`
 --
 
-INSERT INTO `accounts` (`account_id`, `username`, `email`, `password`, `role`, `fullname`, `team`, `age`, `is_admin`, `account_status`, `created_at`) VALUES
-(2, 'PLAYER1', 'player_1@gmail.com', '$2y$10$1pkPU0xom1dzO.Xqhb9JmOJg7yBZdstZqDNRrmZjT5HZaRFtAYFem', 'player', 'Juan Dela Cruz', NULL, 18, 0, 'active', '2025-10-18 16:10:54'),
-(3, 'Staff_1', 'staff1@gmail.com', '$2y$10$xkUAwar4GZsGtOzNKvJ4BOoVC/th8QxW1vZeG6smfOxNi3BifsFkC', 'organizer', '', NULL, 0, 0, 'active', '2025-10-24 14:32:24'),
-(6, 'admin', 'admin@gamex.com', '$2y$10$qG915KrvV/OMBllGHuMexegLbztwarbu0tF8sbARvoSHxQDejI/Fq', '', NULL, NULL, NULL, 1, 'active', '2025-10-31 05:17:40'),
-(7, 'ajmayran', 'aj@gmail.com', '$2y$10$/PjND3f2Pd.POi4uhjCrceuHtAUXtol4MiCCIBAaRqjREstaiZhXW', 'player', 'AJ', NULL, 21, 0, 'active', '2025-10-31 05:52:50');
+INSERT INTO `accounts` (`account_id`, `username`, `email`, `password`, `role`, `fullname`, `team`, `age`, `is_admin`, `account_status`, `created_at`, `notify_updates`, `notify_tournaments`) VALUES
+(2, 'PLAYER1', 'player_1@gmail.com', '$2y$10$1pkPU0xom1dzO.Xqhb9JmOJg7yBZdstZqDNRrmZjT5HZaRFtAYFem', 'player', 'Juan Dela Cruz', NULL, 18, 0, 'active', '2025-10-18 16:10:54', 1, 1),
+(3, 'Staff_1', 'staff1@gmail.com', '$2y$10$xkUAwar4GZsGtOzNKvJ4BOoVC/th8QxW1vZeG6smfOxNi3BifsFkC', 'organizer', '', NULL, 0, 0, 'active', '2025-10-24 14:32:24', 1, 1),
+(6, 'admin', 'admin@gamex.com', '$2y$10$qG915KrvV/OMBllGHuMexegLbztwarbu0tF8sbARvoSHxQDejI/Fq', '', NULL, NULL, NULL, 1, 'active', '2025-10-31 05:17:40', 1, 1),
+(7, 'ajmayran', 'aj@gmail.com', '$2y$10$/PjND3f2Pd.POi4uhjCrceuHtAUXtol4MiCCIBAaRqjREstaiZhXW', 'player', 'AJ', NULL, 21, 0, 'active', '2025-10-31 05:52:50', 1, 1),
+(8, 'player2', 'player_2@gmail.com', '$2y$10$r6YdYZ7B0EUhohLjiaI5ruzMw9MNc2fOwCR3uhyKV9lFocgWteEWS', 'player', 'peter dela cruz', NULL, 18, 0, 'active', '2025-11-25 13:53:25', 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `announcement_logs`
+--
+
+CREATE TABLE `announcement_logs` (
+  `id` int(11) NOT NULL,
+  `admin_id` int(11) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `content` text NOT NULL,
+  `sent_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -357,7 +375,70 @@ INSERT INTO `audit_logs` (`id`, `account_id`, `action`, `details`, `created_at`)
 (285, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:23:25'),
 (286, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:23:25'),
 (287, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:23:26'),
-(288, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:23:58');
+(288, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-16 17:23:58'),
+(289, 2, 'Logout (player)', 'N/A', '2025-11-17 05:38:11'),
+(290, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-17 05:38:35'),
+(291, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-17 05:54:05'),
+(292, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-17 05:56:52'),
+(293, 6, 'Logout ()', 'N/A', '2025-11-17 05:56:55'),
+(294, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-17 05:57:07'),
+(295, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-17 05:57:19'),
+(296, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-17 05:58:50'),
+(297, 3, 'View Tournaments', 'Organizer viewed their created tournaments', '2025-11-17 06:04:38'),
+(298, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-17 14:46:38'),
+(299, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-17 14:46:51'),
+(300, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-17 16:06:16'),
+(301, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-17 16:06:36'),
+(302, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-17 16:25:58'),
+(303, 6, 'Logout ()', 'N/A', '2025-11-17 16:36:58'),
+(304, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-17 16:37:21'),
+(305, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-17 16:52:00'),
+(306, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-17 16:53:19'),
+(307, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-17 16:55:41'),
+(308, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-17 16:55:42'),
+(309, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-17 16:55:49'),
+(310, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-17 16:55:52'),
+(311, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-17 16:55:56'),
+(312, 2, 'Logout (player)', 'N/A', '2025-11-18 16:21:40'),
+(313, 2, 'Logout (player)', 'N/A', '2025-11-22 01:47:10'),
+(314, NULL, 'Unauthorized access attempt (no session)', 'N/A', '2025-11-22 01:47:19'),
+(315, NULL, 'Unauthorized access attempt (no session)', 'N/A', '2025-11-22 01:47:23'),
+(316, NULL, 'Unauthorized access attempt (no session)', 'N/A', '2025-11-22 01:47:25'),
+(317, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-23 14:37:59'),
+(318, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-23 14:49:46'),
+(319, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-23 14:51:43'),
+(320, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-23 14:51:43'),
+(321, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-23 14:55:59'),
+(322, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-23 14:56:00'),
+(323, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-23 14:56:00'),
+(324, 3, 'Logout (organizer)', 'N/A', '2025-11-23 15:00:49'),
+(325, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-23 15:00:59'),
+(326, 6, 'Logout ()', 'N/A', '2025-11-23 15:02:07'),
+(327, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-23 15:02:30'),
+(328, 6, 'Logout ()', 'N/A', '2025-11-23 15:03:29'),
+(329, 2, 'Logout (player)', 'N/A', '2025-11-23 15:03:43'),
+(330, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-23 15:09:45'),
+(331, 6, 'Logout ()', 'N/A', '2025-11-23 15:09:58'),
+(332, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-11-23 15:10:29'),
+(333, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-24 13:49:49'),
+(334, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-24 14:29:15'),
+(335, 6, 'Logout ()', 'N/A', '2025-11-24 14:29:19'),
+(336, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-24 14:29:27'),
+(337, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-11-24 14:30:25'),
+(338, 2, 'Logout (player)', 'N/A', '2025-11-25 13:50:34'),
+(339, 8, 'Registered new account', 'Role: player', '2025-11-25 13:53:25'),
+(340, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 13:40:25'),
+(341, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-12-13 13:46:47'),
+(342, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 13:57:17'),
+(343, 3, 'Logout (organizer)', 'N/A', '2025-12-13 14:06:05'),
+(344, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 14:06:22'),
+(345, 3, 'Logout (organizer)', 'N/A', '2025-12-13 14:37:14'),
+(346, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 14:37:23'),
+(347, 3, 'Logout (organizer)', 'N/A', '2025-12-13 14:46:57'),
+(348, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 14:47:41'),
+(349, 3, 'Logout (organizer)', 'N/A', '2025-12-13 14:58:35'),
+(350, 2, 'Logout (player)', 'N/A', '2025-12-13 15:00:16'),
+(351, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 15:00:28');
 
 -- --------------------------------------------------------
 
@@ -400,6 +481,29 @@ CREATE TABLE `messages` (
   `message` text DEFAULT NULL,
   `reply_message` text DEFAULT NULL,
   `replied_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `messages`
+--
+
+INSERT INTO `messages` (`id`, `sender_id`, `receiver_id`, `name`, `email`, `message`, `reply_message`, `replied_at`, `created_at`) VALUES
+(1, 2, NULL, 'Juan Dela Cruz', 'player_1@gmail.com', 'qwertyuiop[asdfghjkl;\'', NULL, NULL, '2025-12-13 13:38:09');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `notification_id` int(11) NOT NULL,
+  `account_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `type` enum('system','tournament','message','warning','account','team','registration') DEFAULT 'system',
+  `is_read` tinyint(1) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -452,6 +556,14 @@ CREATE TABLE `registrations` (
   `status` enum('pending','approved','rejected') DEFAULT 'pending',
   `registered_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `registrations`
+--
+
+INSERT INTO `registrations` (`registration_id`, `tournament_id`, `team_id`, `account_id`, `status`, `registered_at`) VALUES
+(1, 1, 2, 2, 'pending', '2025-11-16 22:17:44'),
+(2, 24, 2, 2, 'pending', '2025-12-13 14:59:16');
 
 -- --------------------------------------------------------
 
@@ -542,9 +654,9 @@ CREATE TABLE `tournaments` (
   `description` varchar(500) DEFAULT NULL,
   `start_date` datetime NOT NULL,
   `end_date` datetime DEFAULT NULL,
+  `reg_start_date` datetime DEFAULT NULL,
+  `reg_end_date` datetime DEFAULT NULL,
   `max_teams` int(11) NOT NULL,
-  `reg_deadline` datetime NOT NULL,
-  `reg_start` datetime NOT NULL,
   `status` enum('open','completed','cancelled') DEFAULT 'open',
   `game` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -553,8 +665,9 @@ CREATE TABLE `tournaments` (
 -- Dumping data for table `tournaments`
 --
 
-INSERT INTO `tournaments` (`tournament_id`, `organizer_id`, `title`, `description`, `start_date`, `end_date`, `max_teams`, `reg_deadline`, `reg_start`, `status`, `game`) VALUES
-(1, 1, 'AUTUMN CUP 2025', 'A friendly 5v5 online gaming tournament for amateur players.', '2025-12-01 00:00:00', '2025-12-05 23:59:59', 12, '2025-11-25 23:59:59', '2025-11-15 00:00:00', 'open', '');
+INSERT INTO `tournaments` (`tournament_id`, `organizer_id`, `title`, `description`, `start_date`, `end_date`, `reg_start_date`, `reg_end_date`, `max_teams`, `status`, `game`) VALUES
+(1, 1, 'AUTUMN CUP 2025', 'A friendly 5v5 online gaming tournament for amateur players.', '2025-12-01 00:00:00', '2025-12-05 23:59:59', NULL, NULL, 12, 'open', ''),
+(24, 1, 'WINTER TOURNAMENT', '', '2025-12-15 00:00:00', '2025-12-16 23:59:59', '2025-12-13 00:00:00', '2025-12-14 23:59:59', 12, 'open', 'VALORANT');
 
 --
 -- Indexes for dumped tables
@@ -567,6 +680,13 @@ ALTER TABLE `accounts`
   ADD PRIMARY KEY (`account_id`),
   ADD UNIQUE KEY `username` (`username`),
   ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indexes for table `announcement_logs`
+--
+ALTER TABLE `announcement_logs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `admin_id` (`admin_id`);
 
 --
 -- Indexes for table `audit_logs`
@@ -586,6 +706,13 @@ ALTER TABLE `games`
 --
 ALTER TABLE `messages`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`notification_id`),
+  ADD KEY `account_id` (`account_id`);
 
 --
 -- Indexes for table `organizer_profiles`
@@ -655,13 +782,19 @@ ALTER TABLE `tournaments`
 -- AUTO_INCREMENT for table `accounts`
 --
 ALTER TABLE `accounts`
-  MODIFY `account_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `account_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `announcement_logs`
+--
+ALTER TABLE `announcement_logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=289;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=352;
 
 --
 -- AUTO_INCREMENT for table `games`
@@ -673,7 +806,13 @@ ALTER TABLE `games`
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `organizer_profiles`
@@ -691,7 +830,7 @@ ALTER TABLE `player_profiles`
 -- AUTO_INCREMENT for table `registrations`
 --
 ALTER TABLE `registrations`
-  MODIFY `registration_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `registration_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `reports`
@@ -715,11 +854,23 @@ ALTER TABLE `team_invitations`
 -- AUTO_INCREMENT for table `tournaments`
 --
 ALTER TABLE `tournaments`
-  MODIFY `tournament_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `tournament_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `announcement_logs`
+--
+ALTER TABLE `announcement_logs`
+  ADD CONSTRAINT `announcement_logs_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `accounts` (`account_id`);
+
+--
+-- Constraints for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`account_id`);
 
 --
 -- Constraints for table `organizer_profiles`
