@@ -9,8 +9,16 @@ require_once __DIR__ . '/../backend/helpers/auth_guard.php';
 
 checkAuth('organizer');
 
-// Organizer ID from session
-$organizer_id = $_SESSION['account_id'];
+// ===== Get organizer_id from organizer_profiles table =====
+$stmtProfile = $conn->prepare("SELECT organizer_id FROM organizer_profiles WHERE account_id = ?");
+$stmtProfile->execute([$_SESSION['account_id']]);
+$profile = $stmtProfile->fetch(PDO::FETCH_ASSOC);
+
+if (!$profile) {
+    die("Organizer profile not found. Please complete your profile first.");
+}
+
+$organizer_id = $profile['organizer_id']; // ✅ Correct organizer_id
 
 // Organizer Sidebar
 $sidebarPath = __DIR__ . '/../includes/organizer/organizer_sidebar.php';
@@ -28,12 +36,12 @@ $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
 try {
 
-    // ⭐ Count tournaments created by this organizer
+    // ⭐ Count tournaments created by this organizer (case-insensitive search)
     if (!empty($search)) {
         $countStmt = $conn->prepare("
             SELECT COUNT(*) 
             FROM tournaments 
-            WHERE organizer_id = :oid AND title LIKE :search
+            WHERE organizer_id = :oid AND LOWER(title) LIKE LOWER(:search)
         ");
         $countStmt->execute([
             ':oid' => $organizer_id,
@@ -51,11 +59,11 @@ try {
     $totalTournaments = $countStmt->fetchColumn();
     $totalPages = max(1, ceil($totalTournaments / $pageSize));
 
-    // ⭐ Fetch tournaments created by organizer
+    // ⭐ Fetch tournaments created by organizer (case-insensitive search)
     if (!empty($search)) {
         $stmt = $conn->prepare("
             SELECT * FROM tournaments
-            WHERE organizer_id = :oid AND title LIKE :search
+            WHERE organizer_id = :oid AND LOWER(title) LIKE LOWER(:search)
             ORDER BY start_date DESC
             LIMIT :limit OFFSET :offset
         ");
@@ -93,18 +101,223 @@ try {
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
+    /* ====================== SIDEBAR OFFSET ====================== */
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f5f7;
+    }
+
+    /* ====================== MAIN CONTENT ====================== */
     main.content {
-        margin-left: 260px;
-        padding: 25px;
+        margin-left: 280px;
+        padding: 100px 40px 40px;
+        min-height: 100vh;
     }
 
     .content h1 {
         color: #ff6600;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* ====================== SEARCH FORM ====================== */
+    .search-form {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+
+    .search-form input[type="text"] {
+        flex: 1;
+        min-width: 250px;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .search-form input[type="text"]:focus {
+        outline: none;
+        border-color: #ff6600;
+        box-shadow: 0 0 5px rgba(255, 102, 0, 0.3);
+    }
+
+    .search-form button,
+    .search-form .btn {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+    }
+
+    .search-form button {
+        background: #ff6600;
+        color: white;
+    }
+
+    .search-form button:hover {
+        background: #e55a00;
+    }
+
+    .btn-primary {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #218838;
+    }
+
+    /* ====================== TABLE ====================== */
+    .table {
+        width: 100%;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-collapse: collapse;
+    }
+
+    .table thead tr {
+        background: #ff6600;
+        color: white;
     }
 
     .table th {
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+    }
+
+    .table td {
+        padding: 15px;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 14px;
+    }
+
+    .table tbody tr:hover {
+        background: #f9f9f9;
+    }
+
+    .table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .no-data {
+        text-align: center;
+        color: #999;
+        padding: 40px !important;
+        font-style: italic;
+    }
+
+    /* ====================== ACTIONS ====================== */
+    .actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .actions a {
+        padding: 8px 12px;
+        border-radius: 6px;
+        text-decoration: none;
+        color: white;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .actions .view {
+        background: #007bff;
+    }
+
+    .actions .view:hover {
+        background: #0056b3;
+    }
+
+    .actions .edit {
+        background: #ffc107;
+    }
+
+    .actions .edit:hover {
+        background: #e0a800;
+    }
+
+    .actions .delete {
+        background: #dc3545;
+    }
+
+    .actions .delete:hover {
+        background: #c82333;
+    }
+
+    /* ====================== PAGINATION ====================== */
+    .pagination {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin-top: 30px;
+        flex-wrap: wrap;
+    }
+
+    .pagination a,
+    .pagination .active-page {
+        padding: 10px 16px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        text-decoration: none;
+        color: #333;
+        transition: all 0.3s;
+        font-weight: 600;
+    }
+
+    .pagination a:hover {
         background: #ff6600;
-        color: #fff;
+        color: white;
+        border-color: #ff6600;
+    }
+
+    .pagination .active-page {
+        background: #ff6600;
+        color: white;
+        border-color: #ff6600;
+    }
+
+    /* ====================== RESPONSIVE ====================== */
+    @media (max-width: 768px) {
+        main.content {
+            margin-left: 0;
+            padding: 90px 20px 40px;
+        }
+
+        .table {
+            font-size: 12px;
+        }
+
+        .table th,
+        .table td {
+            padding: 10px 8px;
+        }
+
+        .search-form {
+            flex-direction: column;
+        }
+
+        .search-form input[type="text"] {
+            min-width: 100%;
+        }
     }
 </style>
 </head>
@@ -112,10 +325,6 @@ try {
 <body>
 <!-- Navigation -->
 <?php include "../includes/organizer/organizer_header.php"; ?>
-<?php include "../includes/organizer/organizer_sidebar.php"; ?>
-
-
-<!-- Organizer Sidebar -->
 <?php include $sidebarPath; ?>
 
 <main class="content">
@@ -150,22 +359,34 @@ try {
                     <tr>
                         <td><?= htmlspecialchars($t['title']) ?></td>
                         <td><?= htmlspecialchars($t['game']) ?></td>
-                        <td><?= htmlspecialchars($t['start_date']) ?></td>
-                        <td><?= htmlspecialchars($t['end_date']) ?></td>
-                        <td><?= htmlspecialchars($t['status']) ?></td>
+                        <td><?= date('M d, Y', strtotime($t['start_date'])) ?></td>
+                        <td><?= $t['end_date'] ? date('M d, Y', strtotime($t['end_date'])) : 'N/A' ?></td>
+                        <td>
+                            <span style="
+                                padding: 5px 12px;
+                                border-radius: 20px;
+                                font-size: 12px;
+                                font-weight: 600;
+                                background: <?= $t['status'] === 'open' ? '#d4edda' : ($t['status'] === 'completed' ? '#d1ecf1' : '#f8d7da') ?>;
+                                color: <?= $t['status'] === 'open' ? '#155724' : ($t['status'] === 'completed' ? '#0c5460' : '#721c24') ?>;
+                            ">
+                                <?= strtoupper(htmlspecialchars($t['status'])) ?>
+                            </span>
+                        </td>
 
                         <td class="actions">
-                            <a href="view_single_tournament.php?id=<?= $t['tournament_id'] ?>" class="view">
+                            <a href="view_single_tournament.php?id=<?= $t['tournament_id'] ?>" class="view" title="View">
                                 <i class="fa fa-eye"></i>
                             </a>
 
-                            <a href="edit_tournament.php?id=<?= $t['tournament_id'] ?>" class="edit">
+                            <a href="edit_tournament.php?id=<?= $t['tournament_id'] ?>" class="edit" title="Edit">
                                 <i class="fa fa-edit"></i>
                             </a>
 
                             <a href="../backend/delete_tournament.php?id=<?= $t['tournament_id'] ?>"
-                               onclick="return confirm('Delete this tournament?');"
-                               class="delete">
+                               onclick="return confirm('Are you sure you want to delete this tournament?');"
+                               class="delete"
+                               title="Delete">
                                 <i class="fa fa-trash"></i>
                             </a>
                         </td>
@@ -173,7 +394,13 @@ try {
                 <?php endforeach; ?>
 
             <?php else: ?>
-                <tr><td colspan="6" class="no-data">No tournaments found.</td></tr>
+                <tr><td colspan="6" class="no-data">
+                    <?php if (!empty($search)): ?>
+                        No tournaments found matching "<?= htmlspecialchars($search) ?>".
+                    <?php else: ?>
+                        You haven't created any tournaments yet. <a href="create_tournament.php">Create one now!</a>
+                    <?php endif; ?>
+                </td></tr>
             <?php endif; ?>
         </tbody>
     </table>

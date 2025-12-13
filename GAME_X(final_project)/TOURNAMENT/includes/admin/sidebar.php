@@ -1,3 +1,4 @@
+//sidebar.php (this is the php of the admin_sidebar)
 <?php
 // Ensure session is started
 if (session_status() === PHP_SESSION_NONE) {
