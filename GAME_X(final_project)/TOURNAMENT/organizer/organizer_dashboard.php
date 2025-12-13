@@ -169,7 +169,7 @@ $username = $_SESSION['username'] ?? 'Organizer';
         <h2>Quick Actions</h2>
         <a href="create_tournament.php" class="cta-btn">+ Create Tournament</a>
         <a href="view_tournaments.php" class="cta-btn">📋  Manage Tournaments</a>
-        <a href="select_tournament.php" class="cta-btn">🏆 Manage Brackets</a>
+        <a href="manage_brackets.php" class="cta-btn">🏆 Manage Brackets</a>
         <a href="manage_matches.php" class="cta-btn">⚔️ Manage Matches</a>
       </div>
 
@@ -177,7 +177,7 @@ $username = $_SESSION['username'] ?? 'Organizer';
       <div class="info-card">
         <h2>Activity Log</h2>
         <p>Track your latest actions and login history.</p>
-        <a href="../admin/view_audit_logs.php" class="cta-btn">📜 View Logs</a>
+        <a href="view_audit_logs.php" class="cta-btn">📜 View Logs</a>
       </div>
     </section>
   </main>
