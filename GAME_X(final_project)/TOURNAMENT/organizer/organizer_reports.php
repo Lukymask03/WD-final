@@ -1,10 +1,9 @@
 <?php
 session_start();
+require_once __DIR__ . "/../backend/db.php";
 require_once __DIR__ . "/../backend/helpers/auth_guard.php";
-checkAuth('organizer'); // ensures only organizers can access
 
-// Include database connection
-require_once __DIR__ . "/../backend/db.php"; // $conn is defined here
+checkAuth('organizer');
 
 // Determine organizer_id from session or fetch from organizer_profiles
 if (empty($_SESSION['organizer_id'])) {
@@ -49,116 +48,111 @@ try {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Organizer Reports</title> 
-    <link rel="stylesheet" href="../assets/css/common.css">
-    <link rel="stylesheet" href="../assets/css/organizer_dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <style>
-        body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f5f7;
-    margin: 0;
-    color: #1f2937;
-}
-.main-content {
-    margin-left: 250px; /* space for sidebar */
-    padding: 20px;
-}
-h2, h3 {
-    color: #1f2937;
-}
-form {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    margin-bottom: 30px;
-}
-form input, form textarea {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
-form button {
-    background-color: #f97316;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-}
-form button:hover {
-    background-color: #ea580c;
-}
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #fff;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-table th, table td {
-    padding: 12px 15px;
-    text-align: left;
-}
-table th {
-    background-color: #f97316;
-    color: #fff;
-}
-table tr:nth-child(even) {
-    background-color: #f4f4f4;
-}
-</style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Game X</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Modern Organizer CSS -->
+    <link rel="stylesheet" href="../assets/css/organizer_modern.css">
 </head>
+
 <body>
-    <!-- ==== NAVIGATION BAR ==== -->
-  <header class="navbar">
-  <?php include '../includes/organizer/organizer_sidebar.php'; ?>
+    <?php include '../includes/organizer/organizer_sidebar.php'; ?>
 
-          <div class="nav-actions">
-           <a href="../auth/logout.php" class="btn">Logout</a>
+    <main class="org-main">
+        <!-- Page Title -->
+        <section class="org-hero">
+            <div class="org-hero-content">
+                <div class="org-hero-badge">
+                    <i class="fas fa-file-alt"></i>
+                    Reports
+                </div>
+                <h1>Your Submitted Reports 📋</h1>
+                <p>View all reports you've submitted to the system administrators</p>
+            </div>
+        </section>
+
+        <!-- Success Message -->
+        <?php if (isset($_GET['success'])): ?>
+            <div class="org-alert org-alert-success" style="margin-bottom: 30px;">
+                <i class="fas fa-check-circle"></i>
+                Report submitted successfully!
+            </div>
+        <?php endif; ?>
+
+        <!-- Submit New Report Card -->
+        <div class="org-card" style="margin-bottom: 40px;">
+            <div class="org-card-header">
+                <div class="org-card-icon">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+                <h3 class="org-card-title">Submit New Report</h3>
+            </div>
+            <div class="org-card-content">
+                <form action="submit_report.php" method="POST">
+                    <div class="org-form-group">
+                        <label for="subject" class="org-form-label">Subject <span class="required">*</span></label>
+                        <input type="text" id="subject" name="subject" class="org-form-control" required
+                            placeholder="Enter report subject">
+                    </div>
+
+                    <div class="org-form-group">
+                        <label for="description" class="org-form-label">Description <span class="required">*</span></label>
+                        <textarea id="description" name="description" class="org-form-control" rows="5" required
+                            placeholder="Describe the issue or feedback..."></textarea>
+                    </div>
+
+                    <button type="submit" class="org-btn">
+                        <i class="fas fa-paper-plane"></i> Submit Report
+                    </button>
+                </form>
+            </div>
         </div>
-  </header>
 
-    <h2>Submit Report</h2>
+        <!-- Reports Table -->
+        <div class="org-table-container">
+            <div class="org-table-header">
+                <h3 class="org-table-title"><i class="fas fa-list"></i> Report History</h3>
+            </div>
 
-    <?php if (isset($_GET['success'])): ?>
-        <p style="color:green;">✅ Report submitted successfully!</p>
-    <?php endif; ?>
-
-    <form action="submit_report.php" method="POST">
-        <label>Subject:</label>
-        <input type="text" name="subject" required><br><br>
-
-        <label>Description:</label><br>
-        <textarea name="description" rows="5" required></textarea><br><br>
-
-        <button type="submit">Submit Report</button>
-    </form>
-
-    <hr>
-
-    <h3>Your Submitted Reports</h3>
-    <table border="1" cellpadding="5">
-        <tr>
-            <th>Subject</th>
-            <th>Description</th>
-            <th>Date</th>
-        </tr>
-        <?php foreach ($reports as $report): ?>
-            <tr>
-                <td><?= htmlspecialchars($report['subject']) ?></td>
-                <td><?= htmlspecialchars($report['description']) ?></td>
-                <td><?= htmlspecialchars($report['created_at']) ?></td>
-            </tr>
-        <?php endforeach; ?>
-    </table>
+            <?php if (!empty($reports)): ?>
+                <table class="org-data-table">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Description</th>
+                            <th>Date Submitted</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($reports as $report): ?>
+                            <tr>
+                                <td><strong><?= htmlspecialchars($report['subject']) ?></strong></td>
+                                <td><?= htmlspecialchars($report['description']) ?></td>
+                                <td><?= date('M d, Y h:i A', strtotime($report['created_at'])) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <div class="org-empty-state">
+                    <i class="fas fa-file-alt"></i>
+                    <h3>No Reports Yet</h3>
+                    <p>You haven't submitted any reports. Use the form above to submit your first report.</p>
+                </div>
+            <?php endif; ?>
+        </div>
+    </main>
 </body>
+
 </html>

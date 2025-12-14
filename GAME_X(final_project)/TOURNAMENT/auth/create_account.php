@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 require_once __DIR__ . "/../backend/db.php";
 require_once __DIR__ . "/../backend/helpers/log_activity.php";
@@ -10,9 +10,15 @@ if (isset($_POST["register"])) {
     $password = password_hash($_POST["password"], PASSWORD_BCRYPT);
     $role = $_POST["role"];
 
+    // Player fields
     $fullname = $_POST["fullname"] ?? null;
     $team = $_POST["team"] ?? null;
     $age = $_POST["age"] ?? null;
+
+    // Organizer fields
+    $organization = $_POST["organization"] ?? null;
+    $contact_no = $_POST["contact_no"] ?? null;
+    $website = $_POST["website"] ?? null;
 
     // Validate role
     if (!in_array($role, ["player", "organizer"])) {
@@ -49,6 +55,20 @@ if (isset($_POST["register"])) {
 
         $account_id = $conn->lastInsertId();
 
+        // Create organizer profile if role is organizer
+        if ($role === 'organizer') {
+            $orgStmt = $conn->prepare("
+                INSERT INTO organizer_profiles (account_id, organization, contact_no, website)
+                VALUES (:account_id, :organization, :contact_no, :website)
+            ");
+            $orgStmt->execute([
+                ':account_id' => $account_id,
+                ':organization' => $organization ?? 'Default Organization',
+                ':contact_no' => $contact_no ?? '',
+                ':website' => $website ?? ''
+            ]);
+        }
+
         // 🔥 Log activity
         logActivity($account_id, "Registered new account", "Role: $role");
 
@@ -63,7 +83,6 @@ if (isset($_POST["register"])) {
 
         header("Location: create_account.php");
         exit;
-
     } catch (PDOException $e) {
         $_SESSION["error_message"] = "Database error: " . $e->getMessage();
         header("Location: create_account.php");
@@ -79,56 +98,164 @@ if (isset($_POST["register"])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account - GameX</title>
-    <link rel="stylesheet" href="../assets/css/common.css">
-    <link rel="stylesheet" href="../assets/css/create_account.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Create Account | GameX</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Modern Auth CSS -->
+    <link rel="stylesheet" href="../assets/css/auth_modern.css">
+
     <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="../assets/css/sweetalert2.min.css">
 </head>
 
 <body>
-    <div class="container">
-        <div class="left-panel">
-            <h2>Welcome to Game X</h2>
+    <div class="auth-container">
+        <!-- Header -->
+        <div class="auth-header">
+            <div class="auth-logo">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h1 class="auth-title">Join GameX</h1>
+            <p class="auth-subtitle">Create your account and start competing</p>
         </div>
 
-        <div class="right-panel">
-            <form action="create_account.php" method="POST">
-                <h2>Create Account</h2>
+        <!-- Create Account Form -->
+        <form action="create_account.php" method="POST" class="auth-form">
+            <div class="auth-input-group">
+                <label class="auth-label" for="username">Username</label>
+                <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    class="auth-input"
+                    placeholder="Choose a username"
+                    required>
+            </div>
 
-                <input type="text" name="username" placeholder="Username" required>
-                <input type="email" name="email" placeholder="Email Address" required>
+            <div class="auth-input-group">
+                <label class="auth-label" for="email">Email Address</label>
+                <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    class="auth-input"
+                    placeholder="Enter your email"
+                    required>
+            </div>
 
-                <div class="password-wrapper">
-                    <input type="password" name="password" id="password" placeholder="Password" required>
-                    <i class="fa fa-eye" id="togglePassword"></i>
+            <div class="auth-input-group">
+                <label class="auth-label" for="password">Password</label>
+                <div class="auth-password-wrapper">
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        class="auth-input"
+                        placeholder="Create a strong password"
+                        required>
+                    <i class="fas fa-eye auth-password-toggle" id="togglePassword"></i>
                 </div>
+            </div>
 
-                <select name="role" id="role" required>
-                    <option value="">Select Role</option>
-                    <option value="player">Player</option>
-                    <option value="organizer">Organizer</option>
+            <div class="auth-input-group">
+                <label class="auth-label" for="role">Account Type</label>
+                <select name="role" id="role" class="auth-select" required>
+                    <option value="">Select your role</option>
+                    <option value="player">🎮 Player</option>
+                    <option value="organizer">🏆 Tournament Organizer</option>
                 </select>
+            </div>
 
-                <!-- PLAYER FIELDS -->
-                <div id="player-fields" style="display:none;">
-                    <input type="text" name="fullname" placeholder="Full Name">
-                    <input type="text" name="gamer_tag" placeholder="Gamer Tag">
-                    <input type="number" name="age" placeholder="Age">
+            <!-- PLAYER FIELDS -->
+            <div id="player-fields" class="auth-conditional-fields">
+                <div class="auth-input-group">
+                    <label class="auth-label" for="fullname">Full Name</label>
+                    <input
+                        type="text"
+                        name="fullname"
+                        id="fullname"
+                        class="auth-input"
+                        placeholder="Enter your full name">
                 </div>
 
-                <!-- ORGANIZER FIELDS -->
-                <div id="organizer-fields" style="display:none;">
-                    <input type="text" name="organization" placeholder="Organization Name">
-                    <input type="text" name="contact_no" placeholder="Contact Number">
-                    <input type="text" name="website" placeholder="Website (Optional)">
+                <div class="auth-input-group">
+                    <label class="auth-label" for="team">Team/Clan (Optional)</label>
+                    <input
+                        type="text"
+                        name="team"
+                        id="team"
+                        class="auth-input"
+                        placeholder="Your team or clan name">
                 </div>
 
-                <button type="submit" name="register">Create Account</button>
-                <a href="login.php" class="back-btn">Back to Login</a>
-            </form>
-        </div>
+                <div class="auth-input-group">
+                    <label class="auth-label" for="age">Age</label>
+                    <input
+                        type="number"
+                        name="age"
+                        id="age"
+                        class="auth-input"
+                        placeholder="Your age"
+                        min="13"
+                        max="100">
+                </div>
+            </div>
+
+            <!-- ORGANIZER FIELDS -->
+            <div id="organizer-fields" class="auth-conditional-fields">
+                <div class="auth-input-group">
+                    <label class="auth-label" for="organization">Organization Name</label>
+                    <input
+                        type="text"
+                        name="organization"
+                        id="organization"
+                        class="auth-input"
+                        placeholder="Your organization name">
+                </div>
+
+                <div class="auth-input-group">
+                    <label class="auth-label" for="contact_no">Contact Number</label>
+                    <input
+                        type="text"
+                        name="contact_no"
+                        id="contact_no"
+                        class="auth-input"
+                        placeholder="+63 XXX XXX XXXX">
+                </div>
+
+                <div class="auth-input-group">
+                    <label class="auth-label" for="website">Website (Optional)</label>
+                    <input
+                        type="text"
+                        name="website"
+                        id="website"
+                        class="auth-input"
+                        placeholder="https://yourwebsite.com">
+                </div>
+            </div>
+
+            <button type="submit" name="register" class="auth-btn auth-btn-primary">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+
+            <button
+                type="button"
+                class="auth-btn auth-btn-secondary"
+                onclick="window.location.href='login.php'">
+                <i class="fas fa-arrow-left"></i> Back to Login
+            </button>
+        </form>
+
+        <p class="auth-text-center text-small">
+            By creating an account, you agree to our <a href="#" class="auth-link">Terms of Service</a>
+        </p>
     </div>
 
     <!-- SweetAlert2 JS -->
@@ -154,15 +281,13 @@ if (isset($_POST["register"])) {
         const organizerFields = document.getElementById("organizer-fields");
 
         roleSelect.addEventListener("change", function() {
+            playerFields.classList.remove("active");
+            organizerFields.classList.remove("active");
+
             if (this.value === "player") {
-                playerFields.style.display = "block";
-                organizerFields.style.display = "none";
+                playerFields.classList.add("active");
             } else if (this.value === "organizer") {
-                playerFields.style.display = "none";
-                organizerFields.style.display = "block";
-            } else {
-                playerFields.style.display = "none";
-                organizerFields.style.display = "none";
+                organizerFields.classList.add("active");
             }
         });
 
@@ -173,9 +298,9 @@ if (isset($_POST["register"])) {
                 title: 'Account Created! 🎮',
                 html: '<p style="font-size: 1rem; margin-top: 10px;">Welcome to GameX, <strong><?= htmlspecialchars($_SESSION["success_username"] ?? "Player") ?></strong>!</p>',
                 confirmButtonText: 'Login Now',
-                confirmButtonColor: '#ff6600',
+                confirmButtonColor: '#FF5E00',
                 allowOutsideClick: false,
-                background: '#1a1a1a',
+                background: '#0A0E27',
                 color: '#fff',
                 customClass: {
                     popup: 'swal-dark-theme',
@@ -198,8 +323,8 @@ if (isset($_POST["register"])) {
                 icon: 'error',
                 title: 'Oops...',
                 text: '<?= addslashes($_SESSION["error_message"]) ?>',
-                confirmButtonColor: '#ff6600',
-                background: '#1a1a1a',
+                confirmButtonColor: '#FF5E00',
+                background: '#0A0E27',
                 color: '#fff',
                 customClass: {
                     popup: 'swal-dark-theme',
