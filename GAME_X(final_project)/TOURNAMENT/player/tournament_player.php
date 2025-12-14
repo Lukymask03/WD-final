@@ -7,13 +7,13 @@
 require_once(__DIR__ . '/../backend/config.php');
 
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+  session_start();
 }
 
 // Require login as player
 if (!isset($_SESSION['account_id']) || $_SESSION['role'] !== 'player') {
-    header("Location: ../auth/login.php");
-    exit;
+  header("Location: ../auth/login.php");
+  exit;
 }
 
 $account_id = $_SESSION['account_id'];
@@ -43,140 +43,100 @@ $my_tournaments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Tournament Registrations | GAME X</title>
-  <link rel="stylesheet" href="../assets/css/common.css">
-  <link rel="stylesheet" href="../assets/css/tournament.css">
-
-  <style>
-    .tournament-section {
-      padding: 2rem 5%;
-    }
-
-    .section-title {
-      font-size: 2rem;
-      margin-bottom: 1.5rem;
-      color: var(--accent);
-    }
-
-    .tournament-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .tournament-card {
-      background: var(--bg-secondary);
-      border-radius: 20px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      overflow: hidden;
-      transition: transform 0.3s ease;
-    }
-
-    .tournament-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .tournament-info {
-      padding: 1.2rem;
-    }
-
-    .tournament-info h3 {
-      margin: 0 0 0.5rem 0;
-      color: var(--text-main);
-    }
-
-    .tournament-info p {
-      color: var(--text-muted);
-      margin-bottom: 0.8rem;
-      font-size: 0.95rem;
-    }
-
-    .status-badge {
-      display: inline-block;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-weight: bold;
-      color: #fff;
-    }
-
-    .status-pending {
-      background: #f0ad4e;
-    }
-
-    .status-approved {
-      background: #28a745;
-    }
-
-    .status-rejected {
-      background: #dc3545;
-    }
-
-    .no-data {
-      text-align: center;
-      padding: 3rem;
-    }
-
-    .no-data img {
-      width: 180px;
-      opacity: 0.8;
-      margin-bottom: 1rem;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../assets/css/organizer_modern.css">
+  <link rel="stylesheet" href="../assets/css/gaming_modern.css">
+  <link rel="stylesheet" href="../assets/css/player_sidebar_gaming.css">
 </head>
 
 <body>
+  <?php include '../includes/player/player_sidebar.php'; ?>
 
-<!-- ========== NAVBAR ========== -->
-<?php require_once "../includes/player/player_sidebar.php"; ?>
-<?php require_once "../includes/player/player_nav.php"; ?>
-
-<div class="layout">
-<div class="player-content">
-
-
-<!-- ========== MAIN CONTENT ========== -->
-<section class="tournament-section">
-  <h2 class="section-title">Tournament Registrations</h2>
-
-  <?php if (count($my_tournaments) > 0): ?>
-    <div class="tournament-grid">
-      <?php foreach ($my_tournaments as $t): ?>
-        <div class="tournament-card">
-          <div class="tournament-info">
-            <h3><?= htmlspecialchars($t['tournament_title']) ?></h3>
-            <p><?= htmlspecialchars($t['tournament_description']) ?></p>
-            <p><strong>Starts:</strong> <?= date('F d, Y', strtotime($t['start_date'])) ?></p>
-            <p>
-              <span class="status-badge status-<?= strtolower($t['registration_status']) ?>">
-                <?= ucfirst($t['registration_status']) ?>
-              </span>
-            </p>
-          </div>
+  <!-- Main Content -->
+  <main class="org-main">
+    <!-- Gaming Hero Section -->
+    <section class="gaming-hero" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">
+      <div class="gaming-hero__bg"></div>
+      <div class="gaming-hero__content">
+        <div class="gaming-hero__badge">
+          <i class="fas fa-trophy"></i>
+          <span>My Tournaments</span>
         </div>
-      <?php endforeach; ?>
-    </div>
-  <?php else: ?>
-    <div class="no-data">
-      <img src="../assets/images/game_x_logo.png" alt="No Registrations">
-      <p>You haven’t registered for any tournaments yet.</p>
-      <a href="register_tournament.php" class="join-btn">Join One Now</a>
-    </div>
-  <?php endif; ?>
-</section>
+        <h1 class="gaming-hero__title">Tournament Registrations</h1>
+        <p class="gaming-hero__subtitle">View and manage your tournament registrations</p>
+      </div>
+    </section>
 
-<!-- ===== FOOTER ===== -->
-<footer class="footer">
-  <p>&copy; <?= date("Y"); ?> Game X Community. All rights reserved.</p>
-</footer>
+    <!-- Tournament Cards Grid -->
+    <div class="content-section">
+      <?php if (count($my_tournaments) > 0): ?>
+        <div class="tournament-grid">
+          <?php foreach ($my_tournaments as $t): ?>
+            <div class="tournament-card">
+              <div class="tournament-card__header">
+                <h3 class="tournament-card__title"><?= htmlspecialchars($t['tournament_title']) ?></h3>
+                <span class="status-badge status-badge--<?= $t['registration_status'] === 'accepted' ? 'success' : ($t['registration_status'] === 'pending' ? 'warning' : 'danger') ?>">
+                  <?= ucfirst($t['registration_status']) ?>
+                </span>
+              </div>
 
-  </div>
-  </div>
-<!-- ===== SCRIPTS ===== -->
-<script src="../assets/js/darkmode_toggle.js"></script>
-<script src="../assets/js/index.js"></script>
+              <p class="tournament-card__desc"><?= htmlspecialchars($t['tournament_description']) ?></p>
+
+              <div class="tournament-card__info">
+                <div class="info-item info-item--blue">
+                  <div class="info-item__icon">
+                    <i class="fas fa-calendar-day"></i>
+                  </div>
+                  <div class="info-item__content">
+                    <div class="info-item__label">Start Date</div>
+                    <div class="info-item__value"><?= date('F d, Y', strtotime($t['start_date'])) ?></div>
+                  </div>
+                </div>
+
+                <div class="info-item info-item--red">
+                  <div class="info-item__icon">
+                    <i class="fas fa-flag-checkered"></i>
+                  </div>
+                  <div class="info-item__content">
+                    <div class="info-item__label">End Date</div>
+                    <div class="info-item__value"><?= date('F d, Y', strtotime($t['end_date'])) ?></div>
+                  </div>
+                </div>
+
+                <div class="info-item info-item--purple">
+                  <div class="info-item__icon">
+                    <i class="fas fa-info-circle"></i>
+                  </div>
+                  <div class="info-item__content">
+                    <div class="info-item__label">Status</div>
+                    <div class="info-item__value"><?= ucfirst($t['tournament_status']) ?></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      <?php else: ?>
+        <!-- Empty State -->
+        <div class="empty-state">
+          <div class="empty-state__icon">
+            <i class="fas fa-trophy"></i>
+          </div>
+          <h3 class="empty-state__title">No Tournament Registrations</h3>
+          <p class="empty-state__message">You haven't registered for any tournaments yet. Join now to compete!</p>
+          <a href="register_tournament.php" class="btn-gaming btn-gaming--primary">
+            <i class="fas fa-clipboard-list"></i> Register for Tournament
+          </a>
+        </div>
+      <?php endif; ?>
+    </div>
+  </main>
 </body>
+
 </html>

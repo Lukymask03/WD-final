@@ -3,7 +3,6 @@ session_start();
 require_once "../backend/db.php";
 require_once "../backend/helpers/auth_guard.php";
 
-// Ensure only organizers can access this page
 checkAuth('organizer');
 
 // Pagination settings
@@ -46,288 +45,83 @@ $username = $_SESSION['username'] ?? 'Organizer';
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Activity Logs | GameX</title>
-    <link rel="stylesheet" href="../assets/css/common.css">
-    <style>
-        body {
-            background: var(--bg-secondary, #f5f5f5);
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Logs - Game X</title>
 
-        header.navbar {
-            background: var(--bg-main, white);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 30px;
-            border-bottom: 1px solid #ddd;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-        header.navbar .logo-link {
-            display: flex;
-            align-items: center;
-        }
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        header.navbar h2 {
-            color: var(--accent, #ff6600);
-            margin-left: 10px;
-        }
-
-        nav a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: var(--text-main, #333);
-            font-weight: 600;
-        }
-
-        nav a:hover {
-            color: var(--accent-hover, #e65c00);
-        }
-
-        .btn {
-            background: var(--accent, #ff6600);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .btn:hover {
-            background: var(--accent-hover, #e65c00);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .page-header {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-
-        .page-header h1 {
-            margin: 0 0 10px 0;
-            color: var(--accent, #ff6600);
-        }
-
-        .page-header p {
-            margin: 0;
-            color: #666;
-        }
-
-        .logs-table-container {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-            overflow-x: auto;
-        }
-
-        .logs-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .logs-table thead {
-            background: var(--accent, #ff6600);
-            color: white;
-        }
-
-        .logs-table th {
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-        }
-
-        .logs-table td {
-            padding: 15px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .logs-table tbody tr:hover {
-            background: #f9f9f9;
-        }
-
-        .logs-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        .action-badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .action-badge.create {
-            background: #4CAF50;
-            color: white;
-        }
-
-        .action-badge.update {
-            background: #2196F3;
-            color: white;
-        }
-
-        .action-badge.delete {
-            background: #f44336;
-            color: white;
-        }
-
-        .action-badge.view {
-            background: #9E9E9E;
-            color: white;
-        }
-
-        .action-badge.login {
-            background: #FF9800;
-            color: white;
-        }
-
-        .no-logs {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-top: 20px;
-            padding: 20px;
-        }
-
-        .pagination a,
-        .pagination span {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            text-decoration: none;
-            color: #333;
-        }
-
-        .pagination a:hover {
-            background: var(--accent, #ff6600);
-            color: white;
-            border-color: var(--accent, #ff6600);
-        }
-
-        .pagination .current {
-            background: var(--accent, #ff6600);
-            color: white;
-            border-color: var(--accent, #ff6600);
-        }
-
-        .pagination .disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .stat-card h3 {
-            margin: 0 0 10px 0;
-            color: var(--accent, #ff6600);
-            font-size: 32px;
-        }
-
-        .stat-card p {
-            margin: 0;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .error-message {
-            background: #ffebee;
-            color: #c62828;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-    </style>
+    <!-- Modern Organizer CSS -->
+    <link rel="stylesheet" href="../assets/css/organizer_modern.css">
 </head>
+
 <body>
-    <!-- Navigation Bar -->
-    <header class="navbar">
-        <div class="logo-link">
-            <img src="../assets/images/game_x_logo.png" alt="GameX Logo" style="height: 40px; vertical-align: middle;">
-            <h2>GameX Organizer</h2>
-        </div>
+    <?php include '../includes/organizer/organizer_sidebar.php'; ?>
 
-        <nav>
-            <a href="organizer_dashboard.php">Dashboard</a>
-            <a href="create_tournament.php">Create Tournament</a>
-            <a href="view_tournaments.php">Manage Tournaments</a>
-            <a href="manage_brackets.php">Manage Brackets</a>
-        </nav>
+    <main class="org-main">
+        <!-- Hero Section -->
+        <section class="org-hero">
+            <div class="org-hero-content">
+                <div class="org-hero-badge">
+                    <i class="fas fa-history"></i>
+                    Activity Logs
+                </div>
+                <h1>Track Your Activities 📜</h1>
+                <p>Monitor all your actions and system interactions - <?= htmlspecialchars($username) ?></p>
+            </div>
+        </section>
 
-        <div class="nav-actions">
-            <a href="../auth/logout.php" class="btn">Logout</a>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <div class="container">
-        <!-- Page Header -->
-        <div class="page-header">
-            <h1>📜 Activity Logs</h1>
-            <p>Track your actions and login history - <?= htmlspecialchars($username) ?></p>
-        </div>
-
+        <!-- Error Message -->
         <?php if (isset($error)): ?>
-            <div class="error-message">
+            <div class="org-alert org-alert-error" style="margin-bottom: 30px;">
+                <i class="fas fa-exclamation-circle"></i>
                 <?= htmlspecialchars($error) ?>
             </div>
         <?php endif; ?>
 
-        <!-- Statistics -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3><?= number_format($totalLogs) ?></h3>
-                <p>Total Activities</p>
+        <!-- Statistics Cards -->
+        <section class="org-stats-grid" style="margin-bottom: 40px;">
+            <div class="org-stat-card">
+                <div class="org-stat-icon">
+                    <i class="fas fa-list"></i>
+                </div>
+                <div class="org-stat-value"><?= number_format($totalLogs) ?></div>
+                <div class="org-stat-label">Total Activities</div>
             </div>
-            <div class="stat-card">
-                <h3><?= $totalPages ?></h3>
-                <p>Total Pages</p>
+
+            <div class="org-stat-card">
+                <div class="org-stat-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="org-stat-value"><?= $totalPages ?></div>
+                <div class="org-stat-label">Total Pages</div>
             </div>
-            <div class="stat-card">
-                <h3><?= count($logs) ?></h3>
-                <p>Logs on This Page</p>
+
+            <div class="org-stat-card">
+                <div class="org-stat-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="org-stat-value"><?= count($logs) ?></div>
+                <div class="org-stat-label">Current Page Logs</div>
             </div>
-        </div>
+        </section>
 
         <!-- Logs Table -->
-        <div class="logs-table-container">
+        <div class="org-table-container">
+            <div class="org-table-header">
+                <h3 class="org-table-title"><i class="fas fa-history"></i> Activity Log History</h3>
+            </div>
+
             <?php if (!empty($logs)): ?>
-                <table class="logs-table">
+                <table class="org-data-table">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -340,17 +134,17 @@ $username = $_SESSION['username'] ?? 'Organizer';
                         <?php foreach ($logs as $index => $log): ?>
                             <?php
                             // Determine badge class based on action
-                            $badgeClass = 'view';
+                            $badgeClass = 'org-badge-info';
                             $action = strtolower($log['action']);
-                            if (strpos($action, 'create') !== false) $badgeClass = 'create';
-                            elseif (strpos($action, 'update') !== false || strpos($action, 'edit') !== false) $badgeClass = 'update';
-                            elseif (strpos($action, 'delete') !== false) $badgeClass = 'delete';
-                            elseif (strpos($action, 'login') !== false) $badgeClass = 'login';
+                            if (strpos($action, 'create') !== false) $badgeClass = 'org-badge-success';
+                            elseif (strpos($action, 'update') !== false || strpos($action, 'edit') !== false) $badgeClass = 'org-badge-info';
+                            elseif (strpos($action, 'delete') !== false) $badgeClass = 'org-badge-danger';
+                            elseif (strpos($action, 'login') !== false) $badgeClass = 'org-badge-warning';
                             ?>
                             <tr>
                                 <td><?= $offset + $index + 1 ?></td>
                                 <td>
-                                    <span class="action-badge <?= $badgeClass ?>">
+                                    <span class="org-badge <?= $badgeClass ?>">
                                         <?= htmlspecialchars($log['action']) ?>
                                     </span>
                                 </td>
@@ -363,34 +157,36 @@ $username = $_SESSION['username'] ?? 'Organizer';
 
                 <!-- Pagination -->
                 <?php if ($totalPages > 1): ?>
-                    <div class="pagination">
+                    <div class="org-pagination">
                         <?php if ($page > 1): ?>
-                            <a href="?page=1">« First</a>
-                            <a href="?page=<?= $page - 1 ?>">‹ Previous</a>
+                            <a href="?page=1" class="org-page-link">« First</a>
+                            <a href="?page=<?= $page - 1 ?>" class="org-page-link">‹ Previous</a>
                         <?php else: ?>
-                            <span class="disabled">« First</span>
-                            <span class="disabled">‹ Previous</span>
+                            <span class="org-page-link" style="opacity: 0.5; cursor: not-allowed;">« First</span>
+                            <span class="org-page-link" style="opacity: 0.5; cursor: not-allowed;">‹ Previous</span>
                         <?php endif; ?>
 
-                        <span class="current">Page <?= $page ?> of <?= $totalPages ?></span>
+                        <span class="org-page-active">Page <?= $page ?> of <?= $totalPages ?></span>
 
                         <?php if ($page < $totalPages): ?>
-                            <a href="?page=<?= $page + 1 ?>">Next ›</a>
-                            <a href="?page=<?= $totalPages ?>">Last »</a>
+                            <a href="?page=<?= $page + 1 ?>" class="org-page-link">Next ›</a>
+                            <a href="?page=<?= $totalPages ?>" class="org-page-link">Last »</a>
                         <?php else: ?>
-                            <span class="disabled">Next ›</span>
-                            <span class="disabled">Last »</span>
+                            <span class="org-page-link" style="opacity: 0.5; cursor: not-allowed;">Next ›</span>
+                            <span class="org-page-link" style="opacity: 0.5; cursor: not-allowed;">Last »</span>
                         <?php endif; ?>
                     </div>
                 <?php endif; ?>
 
             <?php else: ?>
-                <div class="no-logs">
-                    <h2>No Activity Logs Found</h2>
+                <div class="org-empty-state">
+                    <i class="fas fa-history"></i>
+                    <h3>No Activity Logs Found</h3>
                     <p>Your activities will appear here once you start using the system.</p>
                 </div>
             <?php endif; ?>
         </div>
-    </div>
+    </main>
 </body>
+
 </html>

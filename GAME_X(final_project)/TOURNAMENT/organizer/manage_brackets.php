@@ -16,8 +16,8 @@ $stmt = $conn->prepare("
 $stmt->execute([$_SESSION['account_id']]);
 $tournaments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// ✅ 3. Determine tournament ID (GET or SESSION)
-$tournament_id = $_GET['tournament_id'] ?? $_SESSION['current_tournament_id'] ?? null;
+// ✅ 3. Determine tournament ID (GET only, not session - force selection each time)
+$tournament_id = $_GET['tournament_id'] ?? null;
 
 // If no tournament selected and there are tournaments available, show selection
 if (!$tournament_id && !empty($tournaments)) {
@@ -27,9 +27,9 @@ if (!$tournament_id && !empty($tournaments)) {
     // No tournaments at all
     $noTournaments = true;
 } else {
-    // Save current tournament in session for persistence
+    // Save current tournament in session for persistence within the page
     $_SESSION['current_tournament_id'] = $tournament_id;
-    
+
     // ✅ 4. Fetch tournament details
     $stmt = $conn->prepare("
         SELECT t.tournament_id, t.title, t.status, t.start_date, t.end_date
@@ -75,179 +75,256 @@ if (!$tournament_id && !empty($tournaments)) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Manage Brackets<?= isset($tournament) ? ' - ' . htmlspecialchars($tournament['title']) : '' ?></title>
-    <link rel="stylesheet" href="../assets/css/manage_bracket.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Brackets - Game X<?= isset($tournament) ? ' - ' . htmlspecialchars($tournament['title']) : '' ?></title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Modern Organizer CSS -->
+    <link rel="stylesheet" href="../assets/css/organizer_modern.css">
     <style>
-        .tournament-selector {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 30px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        .bracket-container {
+            display: flex;
+            gap: 30px;
+            overflow-x: auto;
+            padding: 20px 0;
         }
-        .tournament-selector h2 {
-            color: #ff6600;
+
+        .round {
+            min-width: 300px;
+            flex-shrink: 0;
+        }
+
+        .round h2 {
+            color: var(--accent);
             margin-bottom: 20px;
-        }
-        .tournament-list {
-            display: grid;
-            gap: 15px;
-        }
-        .tournament-item {
-            padding: 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-        .tournament-item:hover {
-            border-color: #ff6600;
-            background: #fff5f0;
-            transform: translateY(-2px);
-        }
-        .tournament-item h3 {
-            margin: 0 0 10px 0;
-            color: #333;
-        }
-        .tournament-item .details {
-            color: #666;
-            font-size: 14px;
-        }
-        .tournament-item .status {
-            display: inline-block;
-            padding: 4px 12px;
+            padding: 12px;
+            background: linear-gradient(135deg, rgba(255, 94, 0, 0.1), rgba(255, 123, 51, 0.2));
             border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        .status.active { background: #4CAF50; color: white; }
-        .status.upcoming { background: #2196F3; color: white; }
-        .status.completed { background: #9E9E9E; color: white; }
-        .no-tournaments {
             text-align: center;
-            padding: 40px;
-            color: #666;
         }
-        .no-tournaments a {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 24px;
-            background: #ff6600;
+
+        .match-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .match-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(255, 94, 0, 0.2);
+            border-color: var(--accent);
+        }
+
+        .player {
+            padding: 15px;
+            margin: 8px 0;
+            background: #f5f5f5;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .player.winner {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
             color: white;
-            text-decoration: none;
-            border-radius: 6px;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
         }
-        .no-tournaments a:hover {
-            background: #e65c00;
+
+        .vs {
+            text-align: center;
+            color: #999;
+            font-weight: 700;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .winner-form {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .winner-form button {
+            padding: 10px;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .winner-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 94, 0, 0.4);
+        }
+
+        .winner-label {
+            text-align: center;
+            color: #4CAF50;
+            font-weight: 700;
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: 8px;
+        }
+
+        .no-matches {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+            font-size: 18px;
         }
     </style>
 </head>
+
 <body>
-    <!-- ==== NAVIGATION BAR ==== -->
-    <header class="navbar">
-        <div class="logo-link">
-            <img src="../assets/images/game_x_logo.png" alt="GameX Logo" class="logo-img" style="height: 40px; vertical-align: middle;">
-            <h2>GameX Organizer</h2>
-        </div>
+    <?php include '../includes/organizer/organizer_sidebar.php'; ?>
 
-        <nav>
-            <a href="organizer_dashboard.php">Dashboard</a>
-            <a href="create_tournament.php">Create Tournament</a>
-            <a href="view_tournaments.php">Manage Tournaments</a>
-            <a href="manage_brackets.php">Manage Brackets</a>
-        </nav>
+    <main class="org-main">
+        <?php if (isset($noTournaments) && $noTournaments): ?>
+            <!-- No tournaments available -->
+            <section class="org-hero">
+                <div class="org-hero-content">
+                    <div class="org-hero-badge">
+                        <i class="fas fa-project-diagram"></i>
+                        Manage Brackets
+                    </div>
+                    <h1>Manage Tournament Brackets 🏆</h1>
+                    <p>Create and manage tournament brackets for competitive matches</p>
+                </div>
+            </section>
 
-        <div class="nav-actions">
-            <a href="../auth/logout.php" class="btn">Logout</a>
-        </div>
-    </header>
-
-    <!-- ==== MAIN CONTENT ==== -->
-    <?php if (isset($noTournaments) && $noTournaments): ?>
-        <!-- No tournaments available -->
-        <div class="tournament-selector">
-            <div class="no-tournaments">
-                <h2>No Tournaments Found</h2>
+            <div class="org-empty-state" style="margin-top: 40px;">
+                <i class="fas fa-trophy"></i>
+                <h3>No Tournaments Found</h3>
                 <p>You haven't created any tournaments yet.</p>
-                <a href="create_tournament.php">Create Your First Tournament</a>
-            </div>
-        </div>
-
-    <?php elseif (isset($showSelection) && $showSelection): ?>
-        <!-- Tournament Selection -->
-        <div class="tournament-selector">
-            <h2>Select a Tournament to Manage Brackets</h2>
-            <div class="tournament-list">
-                <?php foreach ($tournaments as $t): ?>
-                    <a href="manage_brackets.php?tournament_id=<?= htmlspecialchars($t['tournament_id']) ?>" class="tournament-item">
-                        <h3><?= htmlspecialchars($t['title']) ?></h3>
-                        <div class="details">
-                            <p>Start: <?= htmlspecialchars($t['start_date']) ?> | End: <?= htmlspecialchars($t['end_date']) ?></p>
-                        </div>
-                        <span class="status <?= strtolower($t['status']) ?>">
-                            <?= htmlspecialchars($t['status']) ?>
-                        </span>
-                    </a>
-                <?php endforeach; ?>
-            </div>
-        </div>
-
-    <?php else: ?>
-        <!-- Bracket Management View -->
-        <div class="container">
-            <h1><?= htmlspecialchars($tournament['title']) ?> - Bracket Management</h1>
-            
-            <!-- Tournament Switcher -->
-            <div style="margin-bottom: 20px;">
-                <a href="manage_brackets.php" style="color: #ff6600; text-decoration: none;">
-                    ← Switch Tournament
+                <a href="create_tournament.php" class="org-btn">
+                    <i class="fas fa-plus-circle"></i> Create Your First Tournament
                 </a>
             </div>
 
-            <div class="bracket-container">
-                <?php if (!empty($rounds)): ?>
-                    <?php foreach ($rounds as $round => $matches): ?>
-                        <div class="round">
-                            <h2>Round <?= htmlspecialchars($round) ?></h2>
-                            <?php foreach ($matches as $match): ?>
-                                <div class="match-card">
-                                    <div class="player <?= ($match['winner'] === $match['team1']) ? 'winner' : '' ?>">
-                                        <?= htmlspecialchars($match['team1'] ?? 'TBD') ?>
-                                    </div>
-                                    <div class="vs">vs</div>
-                                    <div class="player <?= ($match['winner'] === $match['team2']) ? 'winner' : '' ?>">
-                                        <?= htmlspecialchars($match['team2'] ?? 'TBD') ?>
-                                    </div>
+        <?php elseif (isset($showSelection) && $showSelection): ?>
+            <!-- Tournament Selection -->
+            <section class="org-hero">
+                <div class="org-hero-content">
+                    <div class="org-hero-badge">
+                        <i class="fas fa-project-diagram"></i>
+                        Manage Brackets
+                    </div>
+                    <h1>Select a Tournament 🏆</h1>
+                    <p>Choose a tournament to manage its bracket structure</p>
+                </div>
+            </section>
 
-                                    <?php if (empty($match['winner'])): ?>
-                                        <form method="POST" action="update_match_result.php" class="winner-form">
-                                            <input type="hidden" name="match_id" value="<?= htmlspecialchars($match['match_id']) ?>">
-                                            <button type="submit" name="winner" value="<?= htmlspecialchars($match['team1']) ?>">
-                                                Set Winner: <?= htmlspecialchars($match['team1'] ?? 'TBD') ?>
-                                            </button>
-                                            <button type="submit" name="winner" value="<?= htmlspecialchars($match['team2']) ?>">
-                                                Set Winner: <?= htmlspecialchars($match['team2'] ?? 'TBD') ?>
-                                            </button>
-                                        </form>
-                                    <?php else: ?>
-                                        <p class="winner-label">🏆 Winner: <?= htmlspecialchars($match['winner']) ?></p>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endforeach; ?>
+            <div class="org-content-grid" style="margin-top: 40px;">
+                <?php foreach ($tournaments as $t): ?>
+                    <a href="manage_brackets.php?tournament_id=<?= htmlspecialchars($t['tournament_id']) ?>" class="org-card" style="text-decoration: none; color: inherit;">
+                        <div class="org-card-header">
+                            <div class="org-card-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            <h3 class="org-card-title"><?= htmlspecialchars($t['title']) ?></h3>
                         </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p class="no-matches">No matches found for this tournament yet.</p>
-                <?php endif; ?>
+                        <div class="org-card-content">
+                            <p><strong>Start:</strong> <?= date('M d, Y', strtotime($t['start_date'])) ?></p>
+                            <p><strong>End:</strong> <?= date('M d, Y', strtotime($t['end_date'])) ?></p>
+                            <p>
+                                <?php
+                                $badgeClass = 'org-badge-info';
+                                if ($t['status'] == 'active') $badgeClass = 'org-badge-success';
+                                elseif ($t['status'] == 'completed') $badgeClass = 'org-badge-warning';
+                                ?>
+                                <span class="org-badge <?= $badgeClass ?>">
+                                    <?= htmlspecialchars($t['status']) ?>
+                                </span>
+                            </p>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
             </div>
-        </div>
-    <?php endif; ?>
+
+        <?php else: ?>
+            <!-- Bracket Management View -->
+            <section class="org-hero">
+                <div class="org-hero-content">
+                    <div class="org-hero-badge">
+                        <i class="fas fa-project-diagram"></i>
+                        Bracket Management
+                    </div>
+                    <h1><?= htmlspecialchars($tournament['title']) ?> 🏆</h1>
+                    <p>Manage matches and set winners for each round</p>
+                </div>
+            </section>
+
+            <div style="margin-bottom: 30px;">
+                <a href="manage_brackets.php" class="org-btn org-btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Switch Tournament
+                </a>
+            </div>
+
+            <div class="org-card">
+                <div class="bracket-container">
+                    <?php if (!empty($rounds)): ?>
+                        <?php foreach ($rounds as $round => $matches): ?>
+                            <div class="round">
+                                <h2><i class="fas fa-flag"></i> Round <?= htmlspecialchars($round) ?></h2>
+                                <?php foreach ($matches as $match): ?>
+                                    <div class="match-card">
+                                        <div class="player <?= ($match['winner'] === $match['team1']) ? 'winner' : '' ?>">
+                                            <?= htmlspecialchars($match['team1'] ?? 'TBD') ?>
+                                        </div>
+                                        <div class="vs">VS</div>
+                                        <div class="player <?= ($match['winner'] === $match['team2']) ? 'winner' : '' ?>">
+                                            <?= htmlspecialchars($match['team2'] ?? 'TBD') ?>
+                                        </div>
+
+                                        <?php if (empty($match['winner'])): ?>
+                                            <form method="POST" action="update_match_result.php" class="winner-form">
+                                                <input type="hidden" name="match_id" value="<?= htmlspecialchars($match['match_id']) ?>">
+                                                <button type="submit" name="winner" value="<?= htmlspecialchars($match['team1']) ?>">
+                                                    <i class="fas fa-crown"></i> Set Winner: <?= htmlspecialchars($match['team1'] ?? 'TBD') ?>
+                                                </button>
+                                                <button type="submit" name="winner" value="<?= htmlspecialchars($match['team2']) ?>">
+                                                    <i class="fas fa-crown"></i> Set Winner: <?= htmlspecialchars($match['team2'] ?? 'TBD') ?>
+                                                </button>
+                                            </form>
+                                        <?php else: ?>
+                                            <p class="winner-label">
+                                                <i class="fas fa-trophy"></i> Winner: <?= htmlspecialchars($match['winner']) ?>
+                                            </p>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div class="org-empty-state" style="width: 100%;">
+                            <i class="fas fa-project-diagram"></i>
+                            <h3>No Matches Found</h3>
+                            <p>No bracket matches have been created for this tournament yet.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+    </main>
 </body>
+
 </html>

@@ -52,61 +52,100 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login | GameX</title>
-  <link rel="stylesheet" href="../assets/css/common.css">
-  <link rel="stylesheet" href="../assets/css/login.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <!-- SweetAlert2 CSS -->
-  <link rel="stylesheet" href="../assets/css/sweetalert2.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Modern Auth CSS -->
+  <link rel="stylesheet" href="../assets/css/auth_modern.css">
 </head>
 
 <body>
-  <div class="login-container">
-    <h1>Login</h1>
+  <div class="auth-container">
+    <!-- Header -->
+    <div class="auth-header">
+      <div class="auth-logo">
+        <i class="fas fa-gamepad"></i>
+      </div>
+      <h1 class="auth-title">Welcome Back</h1>
+      <p class="auth-subtitle">Login to your GameX account</p>
+    </div>
+
+    <!-- Error Alert -->
     <?php if (!empty($error)): ?>
-      <p class="error"><?= htmlspecialchars($error) ?></p>
+      <div class="auth-alert auth-alert-error">
+        <i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($error) ?>
+      </div>
     <?php endif; ?>
 
-<form method="POST" action="">
-    <input type="email" name="email" placeholder="Email" required>
+    <!-- Login Form -->
+    <form method="POST" action="" class="auth-form">
+      <div class="auth-input-group">
+        <label class="auth-label" for="email">Email Address</label>
+        <input
+          type="email"
+          name="email"
+          id="email"
+          class="auth-input"
+          placeholder="Enter your email"
+          required>
+      </div>
 
-   <div class="password-field">
-  <input type="password" name="password" id="password" placeholder="Password" required>
-  <span class="toggle-password" id="togglePassword">
-     <i class="fa-solid fa-eye"></i>
-  </span>
-  <br>
-</div>
+      <div class="auth-input-group">
+        <label class="auth-label" for="password">Password</label>
+        <div class="auth-password-wrapper">
+          <input
+            type="password"
+            name="password"
+            id="password"
+            class="auth-input"
+            placeholder="Enter your password"
+            required>
+          <i class="fas fa-eye auth-password-toggle" id="togglePassword"></i>
+        </div>
+      </div>
 
+      <button type="submit" class="auth-btn auth-btn-primary">
+        <i class="fas fa-sign-in-alt"></i> Login
+      </button>
 
-    <button type="submit" class="login-btn">Login</button>
+      <div class="auth-divider">OR</div>
 
-    <button type="button" class="create-account-btn" onclick="window.location.href='create_account.php'">
-      Create Account
-    </button>
-</form>
+      <button
+        type="button"
+        class="auth-btn auth-btn-secondary"
+        onclick="window.location.href='create_account.php'">
+        <i class="fas fa-user-plus"></i> Create Account
+      </button>
+    </form>
+
+    <p class="auth-text-center">
+      By logging in, you agree to our <a href="#" class="auth-link">Terms of Service</a>
+    </p>
+  </div>
 
   <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const togglePassword = document.getElementById("togglePassword");
-  const passwordInput = document.getElementById("password");
+    // Password toggle functionality
+    document.addEventListener("DOMContentLoaded", () => {
+      const togglePassword = document.getElementById("togglePassword");
+      const passwordInput = document.getElementById("password");
 
-  if (togglePassword && passwordInput) {
-    togglePassword.addEventListener("click", () => {
-      const type = passwordInput.type === "password" ? "text" : "password";
-      passwordInput.type = type;
+      if (togglePassword && passwordInput) {
+        togglePassword.addEventListener("click", () => {
+          const type = passwordInput.type === "password" ? "text" : "password";
+          passwordInput.type = type;
 
-      const icon = togglePassword.querySelector("i");
-      icon.classList.toggle("fa-eye");
-      icon.classList.toggle("fa-eye-slash");
+          togglePassword.classList.toggle("fa-eye");
+          togglePassword.classList.toggle("fa-eye-slash");
+        });
+      }
     });
-  }
-});
-</script>
-
-  <script src="../assets/js/index.js"></script>
-  <script src="../assets/js/darkmode_toggle.js"></script>
-
-
+  </script>
 </body>
 
 </html>
