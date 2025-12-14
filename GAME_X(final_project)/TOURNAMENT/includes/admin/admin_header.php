@@ -14,7 +14,7 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
 
 <style>
     .top-header {
-        width: calc(100% - 270px);
+        width: calc(100% - 260px);
         height: 65px;
         background: #ffffff;
         border-bottom: 1px solid #ddd;
@@ -24,7 +24,7 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
         padding: 0 25px;
         position: fixed;
         top: 0;
-        left: 270px;
+        left: 260px;
         z-index: 999;
     }
 
@@ -86,7 +86,7 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
         border: 1px solid #ddd;
         border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         z-index: 1000;
         animation: slideDown 0.2s ease;
     }
@@ -96,6 +96,7 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
             opacity: 0;
             transform: translateY(-10px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -261,93 +262,93 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
 
 <!-- Include the notification JavaScript - INLINE VERSION -->
 <script>
-// Admin Notification System - INLINE
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Notification system initializing...');
-    
-    const notifBell = document.getElementById('notif-bell');
-    const notifDropdown = document.getElementById('notif-dropdown');
-    const notifCount = document.getElementById('notif-count');
-    const notifList = document.getElementById('notif-list');
+    // Admin Notification System - INLINE
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Notification system initializing...');
 
-    console.log('Bell element:', notifBell);
-    console.log('Dropdown element:', notifDropdown);
+        const notifBell = document.getElementById('notif-bell');
+        const notifDropdown = document.getElementById('notif-dropdown');
+        const notifCount = document.getElementById('notif-count');
+        const notifList = document.getElementById('notif-list');
 
-    // Toggle notification dropdown
-    if (notifBell) {
-        notifBell.addEventListener('click', function(e) {
-            console.log('Bell clicked!');
-            e.stopPropagation();
-            const isVisible = notifDropdown.style.display === 'block';
-            notifDropdown.style.display = isVisible ? 'none' : 'block';
-            console.log('Dropdown display:', notifDropdown.style.display);
-            
-            // Mark as read when opened
-            if (!isVisible) {
-                markNotificationsAsRead();
+        console.log('Bell element:', notifBell);
+        console.log('Dropdown element:', notifDropdown);
+
+        // Toggle notification dropdown
+        if (notifBell) {
+            notifBell.addEventListener('click', function(e) {
+                console.log('Bell clicked!');
+                e.stopPropagation();
+                const isVisible = notifDropdown.style.display === 'block';
+                notifDropdown.style.display = isVisible ? 'none' : 'block';
+                console.log('Dropdown display:', notifDropdown.style.display);
+
+                // Mark as read when opened
+                if (!isVisible) {
+                    markNotificationsAsRead();
+                }
+            });
+        } else {
+            console.error('Notification bell element not found!');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (notifDropdown && !notifDropdown.contains(e.target) && !notifBell.contains(e.target)) {
+                notifDropdown.style.display = 'none';
             }
         });
-    } else {
-        console.error('Notification bell element not found!');
-    }
 
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        if (notifDropdown && !notifDropdown.contains(e.target) && !notifBell.contains(e.target)) {
-            notifDropdown.style.display = 'none';
+        // Fetch notifications on page load
+        fetchNotifications();
+
+        // Auto-refresh notifications every 30 seconds
+        setInterval(fetchNotifications, 30000);
+
+        // Fetch notifications from server
+        function fetchNotifications() {
+            console.log('Fetching notifications...');
+            fetch('../backend/admin/get_notifications.php')
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Notifications data:', data);
+                    if (data.success) {
+                        updateNotifications(data.notifications);
+                        updateNotificationCount(data.unread_count);
+                    } else {
+                        console.error('Error from server:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching notifications:', error);
+                });
         }
-    });
 
-    // Fetch notifications on page load
-    fetchNotifications();
+        // Update notification list
+        function updateNotifications(notifications) {
+            if (!notifList) return;
 
-    // Auto-refresh notifications every 30 seconds
-    setInterval(fetchNotifications, 30000);
+            notifList.innerHTML = '';
 
-    // Fetch notifications from server
-    function fetchNotifications() {
-        console.log('Fetching notifications...');
-        fetch('../backend/admin/get_notifications.php')
-            .then(response => {
-                console.log('Response status:', response.status);
-                return response.json();
-            })
-            .then(data => {
-                console.log('Notifications data:', data);
-                if (data.success) {
-                    updateNotifications(data.notifications);
-                    updateNotificationCount(data.unread_count);
-                } else {
-                    console.error('Error from server:', data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching notifications:', error);
-            });
-    }
-
-    // Update notification list
-    function updateNotifications(notifications) {
-        if (!notifList) return;
-
-        notifList.innerHTML = '';
-
-        if (notifications.length === 0) {
-            notifList.innerHTML = `
+            if (notifications.length === 0) {
+                notifList.innerHTML = `
                 <li style="padding: 20px; text-align: center; color: #999;">
                     <i class="fas fa-bell-slash" style="font-size: 2rem; margin-bottom: 10px;"></i>
                     <p>No notifications</p>
                 </li>
             `;
-            return;
-        }
+                return;
+            }
 
-        notifications.forEach(notif => {
-            const li = document.createElement('li');
-            li.style.cursor = 'pointer';
-            li.className = notif.is_read == 0 ? 'unread' : '';
-            
-            li.innerHTML = `
+            notifications.forEach(notif => {
+                const li = document.createElement('li');
+                li.style.cursor = 'pointer';
+                li.className = notif.is_read == 0 ? 'unread' : '';
+
+                li.innerHTML = `
                 <div style="display: flex; gap: 10px; align-items: start;">
                     <div style="width: 8px; height: 8px; border-radius: 50%; background: ${notif.is_read == 0 ? '#ff6600' : '#ddd'}; margin-top: 6px; flex-shrink: 0;"></div>
                     <div style="flex: 1;">
@@ -359,84 +360,86 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
             `;
-            
-            // Click to mark as read and navigate if has link
-            li.addEventListener('click', function() {
-                markAsRead(notif.notification_id);
-                if (notif.link) {
-                    window.location.href = notif.link;
-                }
+
+                // Click to mark as read and navigate if has link
+                li.addEventListener('click', function() {
+                    markAsRead(notif.notification_id);
+                    if (notif.link) {
+                        window.location.href = notif.link;
+                    }
+                });
+
+                notifList.appendChild(li);
             });
-            
-            notifList.appendChild(li);
-        });
-    }
-
-    // Update notification count badge
-    function updateNotificationCount(count) {
-        if (!notifCount) return;
-        
-        console.log('Unread count:', count);
-        if (count > 0) {
-            notifCount.textContent = count > 99 ? '99+' : count;
-            notifCount.style.display = 'block';
-        } else {
-            notifCount.style.display = 'none';
         }
-    }
 
-    // Mark single notification as read
-    function markAsRead(notificationId) {
-        fetch('../backend/admin/mark_notification_read.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ notification_id: notificationId })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                fetchNotifications();
+        // Update notification count badge
+        function updateNotificationCount(count) {
+            if (!notifCount) return;
+
+            console.log('Unread count:', count);
+            if (count > 0) {
+                notifCount.textContent = count > 99 ? '99+' : count;
+                notifCount.style.display = 'block';
+            } else {
+                notifCount.style.display = 'none';
             }
-        })
-        .catch(error => {
-            console.error('Error marking notification as read:', error);
-        });
-    }
+        }
 
-    // Mark all notifications as read
-    function markNotificationsAsRead() {
-        fetch('../backend/admin/mark_all_notifications_read.php', {
-            method: 'POST'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                setTimeout(fetchNotifications, 500);
-            }
-        })
-        .catch(error => {
-            console.error('Error marking notifications as read:', error);
-        });
-    }
+        // Mark single notification as read
+        function markAsRead(notificationId) {
+            fetch('../backend/admin/mark_notification_read.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        notification_id: notificationId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        fetchNotifications();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error marking notification as read:', error);
+                });
+        }
 
-    // Format time ago
-    function formatTime(dateString) {
-        const date = new Date(dateString);
-        const now = new Date();
-        const seconds = Math.floor((now - date) / 1000);
+        // Mark all notifications as read
+        function markNotificationsAsRead() {
+            fetch('../backend/admin/mark_all_notifications_read.php', {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        setTimeout(fetchNotifications, 500);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error marking notifications as read:', error);
+                });
+        }
 
-        if (seconds < 60) return 'Just now';
-        if (seconds < 3600) return Math.floor(seconds / 60) + ' minutes ago';
-        if (seconds < 86400) return Math.floor(seconds / 3600) + ' hours ago';
-        if (seconds < 604800) return Math.floor(seconds / 86400) + ' days ago';
-        
-        return date.toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric',
-            year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
-        });
-    }
-});
+        // Format time ago
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+
+            if (seconds < 60) return 'Just now';
+            if (seconds < 3600) return Math.floor(seconds / 60) + ' minutes ago';
+            if (seconds < 86400) return Math.floor(seconds / 3600) + ' hours ago';
+            if (seconds < 604800) return Math.floor(seconds / 86400) + ' days ago';
+
+            return date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+            });
+        }
+    });
 </script>

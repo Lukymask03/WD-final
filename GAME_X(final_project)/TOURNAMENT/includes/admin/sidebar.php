@@ -13,7 +13,6 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
 // Get current page name
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
-<link rel="stylesheet" href="../assets/css/admin_sidebar.css">
 
 <!-- Sidebar -->
 <aside class="sidebar">
