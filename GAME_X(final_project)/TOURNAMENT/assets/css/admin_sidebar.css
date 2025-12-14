@@ -12,7 +12,7 @@
     overflow-x: hidden;
     transition: all 0.3s ease;
     z-index: 1000;
-    transform: translateX(0); 
+    transform: translateX(0) !important;
 }
 
 .sidebar-header {
@@ -131,11 +131,11 @@
     .sidebar {
         transform: translateX(-100%);
     }
-    
+
     .sidebar.active {
         transform: translateX(0);
     }
-    
+
     .main-content {
         margin-left: 0 !important;
         width: 100% !important;
