@@ -108,6 +108,7 @@ if ($logs > 0) {
       background: var(--bg-secondary);
       color: var(--text-main);
     }
+
     /* Top Bar */
     .top-bar {
       background: var(--bg-main);
@@ -496,20 +497,12 @@ if ($logs > 0) {
     }
 
     @media (max-width: 768px) {
-      .sidebar {
-        transform: translateX(-100%);
-      }
-
-      .sidebar.active {
-        transform: translateX(0);
-      }
-
-      .main-content {
-        margin-left: 0;
-      }
-
       .stats-grid {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+      
+      .dashboard-content {
+        padding: 20px;
       }
     }
 
@@ -529,13 +522,7 @@ if ($logs > 0) {
 </head>
 
 <body>
-  <body>
-
-<?php include "../includes/admin/admin_header.php"; ?>
-<?php include "../includes/admin/sidebar.php"; ?>
-
-<!-- your page content below -->
-
+  <?php include "../includes/admin/sidebar.php"; ?>
 
   <!-- Main Content -->
   <div class="main-content">
@@ -682,34 +669,33 @@ if ($logs > 0) {
         </div>
       </div>
 
-<!-- Quick Actions -->
-<div class="card">
-    <div class="card-header">
-        <div class="card-title">
+      <!-- Quick Actions -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
             <i class="fas fa-bolt"></i>
             Quick Actions
+          </div>
         </div>
-    </div>
-    <div class="quick-actions">
-        <a href="users.php" class="quick-action-btn">
+        <div class="quick-actions">
+          <a href="users.php" class="quick-action-btn">
             <i class="fas fa-users"></i>
             <span>User Management</span>
-        </a>
-        <a href="games.php" class="quick-action-btn">
+          </a>
+          <a href="games.php" class="quick-action-btn">
             <i class="fas fa-gamepad"></i>
             <span>Manage Games</span>
-        </a>
-        <a href="tournaments.php" class="quick-action-btn">
+          </a>
+          <a href="tournaments.php" class="quick-action-btn">
             <i class="fas fa-trophy"></i>
             <span>View Tournaments</span>
-        </a>
-        <a href="audit_logs.php" class="quick-action-btn">
+          </a>
+          <a href="audit_logs.php" class="quick-action-btn">
             <i class="fas fa-clipboard-list"></i>
             <span>System Logs</span>
-        </a>
-    </div>
-</div>
-
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 

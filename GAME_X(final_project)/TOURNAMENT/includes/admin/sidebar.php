@@ -1,4 +1,3 @@
-//sidebar.php (this is the php of the admin_sidebar)
 <?php
 // Ensure session is started
 if (session_status() === PHP_SESSION_NONE) {
@@ -57,35 +56,33 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </div>
 
         <!-- System Section -->
-       
-<div class="menu-section">
-    <div class="menu-section-title">System</div>
-    
-      <a href="audit_logs.php" class="menu-item <?= $current_page === 'audit_logs.php' ? 'active' : '' ?>">
-         <i class="fas fa-clipboard-list"></i>
-         <span>Audit Logs</span>
-      </a>
+        <div class="menu-section">
+            <div class="menu-section-title">System</div>
 
-       <a href="reports.php" class="menu-item <?= $current_page === 'reports.php' ? 'active' : '' ?>">
-          <i class="fas fa-chart-bar"></i>
-          <span>Reports</span>
-       </a>
+            <a href="audit_logs.php" class="menu-item <?= $current_page === 'audit_logs.php' ? 'active' : '' ?>">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Audit Logs</span>
+            </a>
 
-        <a href="send_announcement.php" class="menu-item <?= $current_page === 'send_announcement.php' ? 'active' : '' ?>">
-           <i class="fas fa-bullhorn"></i>
-           <span>Send Announcement</span>
-        </a>
+            <a href="reports.php" class="menu-item <?= $current_page === 'reports.php' ? 'active' : '' ?>">
+                <i class="fas fa-chart-bar"></i>
+                <span>Reports</span>
+            </a>
 
-       <a href="admin_announcement.php" class="menu-item <?= $current_page === 'admin_announcement.php' ? 'active' : '' ?>">
-        <i class="fas fa-bullhorn"></i>
-        <span>Announcements</span>
-       </a>
-       
-       <a href="announcement_logs.php" class="menu-item <?= $current_page === 'announcement_logs.php' ? 'active' : '' ?>">
-          <i class="fas fa-history"></i>
-          <span>Announcement Logs</span>
-       </a>
-    
-      </div>
+            <a href="send_announcement.php" class="menu-item <?= $current_page === 'send_announcement.php' ? 'active' : '' ?>">
+                <i class="fas fa-bullhorn"></i>
+                <span>Send Announcement</span>
+            </a>
+
+            <a href="admin_announcement.php" class="menu-item <?= $current_page === 'admin_announcement.php' ? 'active' : '' ?>">
+                <i class="fas fa-bullhorn"></i>
+                <span>Announcements</span>
+            </a>
+
+            <a href="announcement_logs.php" class="menu-item <?= $current_page === 'announcement_logs.php' ? 'active' : '' ?>">
+                <i class="fas fa-history"></i>
+                <span>Announcement Logs</span>
+            </a>
+        </div>
     </nav>
 </aside>
