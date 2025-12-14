@@ -9,47 +9,46 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'player') {
 }
 ?>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="../assets/css/player_nav.css">
+<!-- Nav styling is handled by organizer_modern.css -->
 
-<nav class="player-top-nav">
-
-    <div class="nav-left">
-        <h2 class="player-panel-title">Player Panel</h2>
-
+<nav class="org-topbar">
+    <div class="org-topbar-left">
+        <button class="org-menu-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <h1 class="org-topbar-title">Player Panel</h1>
     </div>
 
-    <div class="nav-right">
-
-        <!-- NOTIFICATION BELL -->
-        <div class="notification-wrapper">
-
-            <div id="notif-bell" class="notif-bell">
-                <i class="fa-solid fa-bell"></i>
-                <span id="notif-count" class="notif-count">0</span>
-            </div>
-
-            <!-- DROPDOWN -->
-            <div id="notif-dropdown" class="notif-dropdown">
-                <h4>Notifications</h4>
-                <ul id="notif-list"></ul>
-                <a href="player_notifications.php" class="view-all">View All</a>
+    <div class="org-topbar-right">
+        <!-- Notifications -->
+        <div class="org-notification">
+            <button class="org-notif-btn" id="notif-bell">
+                <i class="fas fa-bell"></i>
+                <span class="org-notif-badge" id="notif-count">0</span>
+            </button>
+            <div class="org-notif-dropdown" id="notif-dropdown">
+                <div class="org-notif-header">
+                    <h4>Notifications</h4>
+                </div>
+                <div class="org-notif-list" id="notif-list"></div>
+                <a href="player_notifications.php" class="org-notif-view-all">View All</a>
             </div>
         </div>
 
-        <!-- LOGOUT -->
-        <a href="../auth/logout.php" class="logout-btn">Logout</a>
-
-
-
-        <!-- Small burger inside sidebar to close it -->
-        <button id="sidebarToggle" class="burger-btn">
-           <i class="fas fa-bars"></i>
-        </button>
-
-
+        <!-- Profile Dropdown -->
+        <div class="org-profile-dropdown">
+            <button class="org-profile-btn">
+                <span><?= htmlspecialchars($_SESSION['username'] ?? 'Player') ?></span>
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="org-profile-menu">
+                <a href="../auth/logout.php">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
     </div>
-
 </nav>
 
 <script src="../assets/js/player_notifications.js"></script>

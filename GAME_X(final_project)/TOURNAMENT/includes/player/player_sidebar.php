@@ -1,143 +1,117 @@
 <?php
-// Ensure session is started
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Restrict access to players only
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'player') {
-    header("Location: ../auth/login.php");
+// Ensure user is authenticated
+if (!isset($_SESSION['account_id'])) {
+    header('Location: ../auth/login.php');
     exit();
 }
 
-// Current page
+// Get current page
 $current_page = basename($_SERVER['PHP_SELF']);
+
+// Get user's first letter for avatar
+$avatar_letter = strtoupper(substr($_SESSION['username'] ?? 'P', 0, 1));
 ?>
-<link rel="stylesheet" href="../assets/css/admin_sidebar.css">
-<link rel="stylesheet" href="../assets/css/player_sidebar_fix.css">
 
-<style>
-/* Sidebar default hidden */
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 260px;
-    height: 100%;
-    background: var(--bg-secondary);
-    border-right: 2px solid var(--border);
-    transform: translateX(-100%);
-    transition: 0.3s ease-in-out;
-    z-index: 3000;
-}
-
-/* Sidebar visible */
-.sidebar.active {
-    transform: translateX(0);
-}
-
-/* Burger button inside sidebar */
-.sidebar-toggle {
-    background: var(--bg-card);
-    border: 2px solid var(--accent);
-    color: var(--accent);
-    padding: 6px 10px;
-    border-radius: 6px;
-    font-size: 18px;
-    cursor: pointer;
-    margin-right: 10px;
-}
-
-.sidebar-toggle:hover {
-    background: var(--accent);
-    color: #fff;
-}
-</style>
-
-<!-- Player Sidebar -->
-<aside class="sidebar" id="playerSidebar">
-    <div class="sidebar-header">
-
-        <a href="player_dashboard.php" class="sidebar-logo">
-            <img src="../assets/images/game_x_logo.png" alt="GameX Logo">
-            <h1 class="sidebar-title">
-                <span class="highlight-orange">GAME</span>
-                <span class="highlight-red"> X</span>
-            </h1>
+<aside class="org-sidebar">
+    <!-- Brand Logo -->
+    <div class="org-brand">
+        <a href="../index.php" class="org-brand-link">
+            <img src="../assets/images/logo.png" alt="Game X Logo" class="org-logo" onerror="this.style.display='none'">
+            <div class="org-brand-text">
+                <h1><span class="org-brand-orange">GAME</span> <span class="org-brand-red">X</span></h1>
+                <div class="org-brand-subtitle">Player Portal</div>
+            </div>
         </a>
     </div>
 
-    <nav class="sidebar-menu">
+    <!-- Profile Section -->
+    <div class="org-profile">
+        <div class="org-profile-avatar">
+            <?php echo $avatar_letter; ?>
+        </div>
+        <div class="org-profile-info">
+            <h4><?php echo htmlspecialchars($_SESSION['username']); ?></h4>
+            <div class="org-profile-role">
+                <i class="fas fa-user"></i> Player
+            </div>
+        </div>
+    </div>
 
-        <div class="menu-section">
-            <div class="menu-section-title">Main</div>
-            <a href="player_dashboard.php" 
-            class="menu-item <?= $current_page === 'player_dashboard.php' ? 'active' : '' ?>">
+    <!-- Navigation -->
+    <nav class="org-nav">
+        <!-- Overview Section -->
+        <div class="org-nav-section">
+            <div class="org-nav-title">
+                <i class="fas fa-home"></i> Overview
+            </div>
+            <a href="player_dashboard.php" class="org-nav-item <?php echo $current_page == 'player_dashboard.php' ? 'active' : ''; ?>">
                 <i class="fas fa-th-large"></i>
                 <span>Dashboard</span>
             </a>
         </div>
 
-        <div class="menu-section">
-            <div class="menu-section-title">Tournaments</div>
-            <a href="register_tournament.php"
-            class="menu-item <?= $current_page === 'register_tournament.php' ? 'active' : '' ?>">
+        <!-- Tournament Section -->
+        <div class="org-nav-section">
+            <div class="org-nav-title">
+                <i class="fas fa-trophy"></i> Tournaments
+            </div>
+            <a href="register_tournament.php" class="org-nav-item <?php echo $current_page == 'register_tournament.php' ? 'active' : ''; ?>">
                 <i class="fas fa-clipboard-list"></i>
                 <span>Register Tournament</span>
             </a>
-
-            <a href="tournament_player.php"
-            class="menu-item <?= $current_page === 'tournament_player.php' ? 'active' : '' ?>">
-                <i class="fas fa-trophy"></i>
+            <a href="tournament_player.php" class="org-nav-item <?php echo $current_page == 'tournament_player.php' ? 'active' : ''; ?>">
+                <i class="fas fa-gamepad"></i>
                 <span>My Tournaments</span>
             </a>
         </div>
 
-        <div class="menu-section">
-            <div class="menu-section-title">Teams</div>
-            <a href="teams.php"
-            class="menu-item <?= $current_page === 'teams.php' ? 'active' : '' ?>">
-                <i class="fas fa-users"></i>
+        <!-- Teams Section -->
+        <div class="org-nav-section">
+            <div class="org-nav-title">
+                <i class="fas fa-users"></i> Teams
+            </div>
+            <a href="teams.php" class="org-nav-item <?php echo $current_page == 'teams.php' ? 'active' : ''; ?>">
+                <i class="fas fa-compass"></i>
+                <span>Browse Teams</span>
+            </a>
+            <a href="my_teams.php" class="org-nav-item <?php echo $current_page == 'my_teams.php' ? 'active' : ''; ?>">
+                <i class="fas fa-shield-alt"></i>
                 <span>My Teams</span>
             </a>
-
-            <a href="invitations.php"
-            class="menu-item <?= $current_page === 'invitations.php' ? 'active' : '' ?>">
+            <a href="invitations.php" class="org-nav-item <?php echo $current_page == 'invitations.php' ? 'active' : ''; ?>">
                 <i class="fas fa-envelope"></i>
                 <span>Invitations</span>
             </a>
         </div>
 
-        <div class="menu-section">
-            <div class="menu-section-title">Support</div>
-            <a href="player_contact.php"
-            class="menu-item <?= $current_page === 'player_contact.php' ? 'active' : '' ?>">
-                <i class="fas fa-headset"></i>
-                <span>Support</span>
+        <!-- Notifications Section -->
+        <div class="org-nav-section">
+            <div class="org-nav-title">
+                <i class="fas fa-bell"></i> Activity
+            </div>
+            <a href="player_notifications.php" class="org-nav-item <?php echo $current_page == 'player_notifications.php' ? 'active' : ''; ?>">
+                <i class="fas fa-bell"></i>
+                <span>Notifications</span>
             </a>
         </div>
 
+        <!-- Support Section -->
+        <div class="org-nav-section">
+            <div class="org-nav-title">
+                <i class="fas fa-life-ring"></i> Support
+            </div>
+            <a href="player_contact.php" class="org-nav-item <?php echo $current_page == 'player_contact.php' ? 'active' : ''; ?>">
+                <i class="fas fa-headset"></i>
+                <span>Contact Support</span>
+            </a>
+        </div>
     </nav>
+
+    <!-- Footer/Logout -->
+    <div class="org-sidebar-footer" style="padding: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+        <a href="../auth/logout.php" class="org-nav-item logout-btn" style="margin: 0 0.75rem;">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </a>
+    </div>
 </aside>
-
-<script>
-// Toggle from NAV BAR burger button
-document.addEventListener("DOMContentLoaded", () => {
-
-    const sidebar = document.getElementById("playerSidebar");
-    const navBurger = document.getElementById("sidebarToggle"); // from player_nav.php
-    const closeBtn = document.getElementById("closeSidebar");
-
-    if (navBurger) {
-        navBurger.addEventListener("click", () => {
-            sidebar.classList.toggle("active");
-        });
-    }
-
-    if (closeBtn) {
-        closeBtn.addEventListener("click", () => {
-            sidebar.classList.remove("active");
-        });
-    }
-});
-</script>
