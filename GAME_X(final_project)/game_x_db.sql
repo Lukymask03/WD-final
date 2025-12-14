@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 13, 2025 at 04:25 PM
+-- Generation Time: Dec 14, 2025 at 09:24 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -53,6 +53,20 @@ INSERT INTO `accounts` (`account_id`, `username`, `email`, `password`, `role`, `
 (6, 'admin', 'admin@gamex.com', '$2y$10$qG915KrvV/OMBllGHuMexegLbztwarbu0tF8sbARvoSHxQDejI/Fq', '', NULL, NULL, NULL, 1, 'active', '2025-10-31 05:17:40', 1, 1),
 (7, 'ajmayran', 'aj@gmail.com', '$2y$10$/PjND3f2Pd.POi4uhjCrceuHtAUXtol4MiCCIBAaRqjREstaiZhXW', 'player', 'AJ', NULL, 21, 0, 'active', '2025-10-31 05:52:50', 1, 1),
 (8, 'player2', 'player_2@gmail.com', '$2y$10$r6YdYZ7B0EUhohLjiaI5ruzMw9MNc2fOwCR3uhyKV9lFocgWteEWS', 'player', 'peter dela cruz', NULL, 18, 0, 'active', '2025-11-25 13:53:25', 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `activity_logs`
+--
+
+CREATE TABLE `activity_logs` (
+  `log_id` int(11) NOT NULL,
+  `account_id` int(11) NOT NULL,
+  `action` varchar(100) NOT NULL,
+  `description` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -438,7 +452,33 @@ INSERT INTO `audit_logs` (`id`, `account_id`, `action`, `details`, `created_at`)
 (348, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 14:47:41'),
 (349, 3, 'Logout (organizer)', 'N/A', '2025-12-13 14:58:35'),
 (350, 2, 'Logout (player)', 'N/A', '2025-12-13 15:00:16'),
-(351, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 15:00:28');
+(351, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 15:00:28'),
+(352, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 15:43:17'),
+(353, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 15:54:23'),
+(354, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 16:00:49'),
+(355, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 16:05:49'),
+(356, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 16:10:34'),
+(357, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 16:12:33'),
+(358, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 16:12:54'),
+(359, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 16:12:54'),
+(360, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 16:21:33'),
+(361, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 16:24:48'),
+(362, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 16:24:59'),
+(363, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 16:26:24'),
+(364, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-13 16:34:07'),
+(365, 3, 'Logout (organizer)', 'N/A', '2025-12-13 16:34:11'),
+(366, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-12-13 16:34:20'),
+(367, 6, 'Logout ()', 'N/A', '2025-12-13 16:35:13'),
+(368, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-12-13 16:46:59'),
+(369, 6, 'Logout ()', 'N/A', '2025-12-13 16:47:51'),
+(370, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-12-14 06:35:09'),
+(371, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-12-14 06:52:14'),
+(372, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-12-14 07:38:47'),
+(373, 6, 'Logout ()', 'N/A', '2025-12-14 08:04:49'),
+(374, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-12-14 08:04:59'),
+(375, 6, 'View Dashboard', 'Admin accessed the dashboard', '2025-12-14 08:16:53'),
+(376, 6, 'Logout ()', 'N/A', '2025-12-14 08:19:27'),
+(377, 3, 'View Dashboard', 'Organizer accessed the dashboard', '2025-12-14 08:19:35');
 
 -- --------------------------------------------------------
 
@@ -465,6 +505,27 @@ INSERT INTO `games` (`game_id`, `game_name`, `game_icon`, `game_image`, `is_acti
 (4, 'League Of Legends', 'fas fa-gamepad', 'assets/images/games/game_69044da08384c.jpg', 1),
 (5, 'Call Of Duty Mobile', 'fas fa-gamepad', 'assets/images/games/game_69044dad95758.png', 1),
 (6, 'xyz', 'XYZ', NULL, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `matches`
+--
+
+CREATE TABLE `matches` (
+  `match_id` int(11) NOT NULL,
+  `tournament_id` int(11) NOT NULL,
+  `team1_id` int(11) DEFAULT NULL,
+  `team2_id` int(11) DEFAULT NULL,
+  `match_date` date DEFAULT NULL,
+  `match_time` time DEFAULT NULL,
+  `round` int(11) DEFAULT 1,
+  `status` enum('scheduled','ongoing','completed','cancelled') DEFAULT 'scheduled',
+  `team1_score` int(11) DEFAULT NULL,
+  `team2_score` int(11) DEFAULT NULL,
+  `winner_id` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -502,6 +563,7 @@ CREATE TABLE `notifications` (
   `account_id` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
   `message` text NOT NULL,
+  `link` varchar(500) DEFAULT NULL,
   `type` enum('system','tournament','message','warning','account','team','registration') DEFAULT 'system',
   `is_read` tinyint(1) DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
@@ -682,6 +744,13 @@ ALTER TABLE `accounts`
   ADD UNIQUE KEY `email` (`email`);
 
 --
+-- Indexes for table `activity_logs`
+--
+ALTER TABLE `activity_logs`
+  ADD PRIMARY KEY (`log_id`),
+  ADD KEY `account_id` (`account_id`);
+
+--
 -- Indexes for table `announcement_logs`
 --
 ALTER TABLE `announcement_logs`
@@ -700,6 +769,16 @@ ALTER TABLE `audit_logs`
 ALTER TABLE `games`
   ADD PRIMARY KEY (`game_id`),
   ADD UNIQUE KEY `game_name` (`game_name`);
+
+--
+-- Indexes for table `matches`
+--
+ALTER TABLE `matches`
+  ADD PRIMARY KEY (`match_id`),
+  ADD KEY `tournament_id` (`tournament_id`),
+  ADD KEY `team1_id` (`team1_id`),
+  ADD KEY `team2_id` (`team2_id`),
+  ADD KEY `winner_id` (`winner_id`);
 
 --
 -- Indexes for table `messages`
@@ -785,6 +864,12 @@ ALTER TABLE `accounts`
   MODIFY `account_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
+-- AUTO_INCREMENT for table `activity_logs`
+--
+ALTER TABLE `activity_logs`
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `announcement_logs`
 --
 ALTER TABLE `announcement_logs`
@@ -794,13 +879,19 @@ ALTER TABLE `announcement_logs`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=352;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=378;
 
 --
 -- AUTO_INCREMENT for table `games`
 --
 ALTER TABLE `games`
   MODIFY `game_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `matches`
+--
+ALTER TABLE `matches`
+  MODIFY `match_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `messages`
@@ -861,10 +952,25 @@ ALTER TABLE `tournaments`
 --
 
 --
+-- Constraints for table `activity_logs`
+--
+ALTER TABLE `activity_logs`
+  ADD CONSTRAINT `fk_activity_logs_account` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`account_id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `announcement_logs`
 --
 ALTER TABLE `announcement_logs`
   ADD CONSTRAINT `announcement_logs_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `accounts` (`account_id`);
+
+--
+-- Constraints for table `matches`
+--
+ALTER TABLE `matches`
+  ADD CONSTRAINT `matches_ibfk_1` FOREIGN KEY (`tournament_id`) REFERENCES `tournaments` (`tournament_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `matches_ibfk_2` FOREIGN KEY (`team1_id`) REFERENCES `teams` (`team_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `matches_ibfk_3` FOREIGN KEY (`team2_id`) REFERENCES `teams` (`team_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `matches_ibfk_4` FOREIGN KEY (`winner_id`) REFERENCES `teams` (`team_id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `notifications`
