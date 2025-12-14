@@ -85,6 +85,9 @@ try {
 if ($logs > 0) {
     logActivity($_SESSION['account_id'], "View Dashboard", "Admin accessed the dashboard");
 }
+
+
+
 ?>
 
 <!DOCTYPE html>
