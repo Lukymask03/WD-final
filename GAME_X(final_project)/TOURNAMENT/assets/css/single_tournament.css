@@ -1,20 +1,7 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #e8ebf0 100%);
-    min-height: 100vh;
-}
-
 main.content {
     margin-left: 280px;
-    padding: 100px 50px 50px;
+    padding: 40px;
     min-height: 100vh;
-    animation: fadeIn 0.4s ease-in;
 }
 
 @keyframes fadeIn {
